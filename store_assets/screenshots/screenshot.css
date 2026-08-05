@@ -1,0 +1,219 @@
+/* Passport Photo Studio store-screenshot frame system.
+ *
+ * Every frame is laid out on a 1080-unit-wide artboard and then scaled to the
+ * target canvas, so one design serves both iPhone sizes and Play without
+ * per-size tweaking. Colours come from store_assets/BRAND.md. */
+
+:root {
+  --ink: #0c2350;
+  --ink-top: #173f8e;
+  --ink-deep: #071634;
+  --surface: #16233f;
+  --raised: #17305f;
+  --outline: #2b4880;
+  --blue: #1e5bd8;
+  --sky: #7fb0ff;
+  --green: #4ed89a;
+  --text: #eaf0fa;
+  --muted: #9fb2ce;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--ink);
+  overflow: hidden;
+}
+
+/* The exact store canvas. Everything inside is clipped to it. */
+.stage {
+  position: relative;
+  overflow: hidden;
+  background: var(--ink);
+}
+
+/* The 1080-wide design surface, scaled into the stage by screenshot.js. */
+.art {
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform-origin: top left;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica,
+    Arial, sans-serif;
+  background: linear-gradient(160deg, var(--ink-top) 0%, var(--ink) 55%, var(--ink-deep) 100%);
+}
+
+/* Registration marks and a measuring rule — the icon's own language, faint. */
+.marks {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+/* A soft blue bloom behind the headline. */
+.bloom {
+  position: absolute;
+  left: 50%;
+  top: -220px;
+  width: 1500px;
+  height: 1500px;
+  margin-left: -750px;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    rgba(127, 176, 255, 0.18) 0%,
+    rgba(30, 91, 216, 0.07) 45%,
+    rgba(30, 91, 216, 0) 70%
+  );
+  pointer-events: none;
+}
+
+header {
+  position: relative;
+  flex: 0 0 auto;
+  padding: 104px 96px 0;
+  text-align: center;
+}
+
+h1 {
+  margin: 0;
+  font-size: 74px;
+  line-height: 1.14;
+  font-weight: 800;
+  letter-spacing: -1.6px;
+  color: var(--text);
+  text-wrap: balance;
+}
+
+/* One green phrase per headline, set by screenshot.js, to tie the set
+ * together — the same green as a passed compliance check in the app. */
+h1 em {
+  font-style: normal;
+  color: var(--green);
+}
+
+.sub {
+  margin: 26px auto 0;
+  max-width: 840px;
+  font-size: 32px;
+  line-height: 1.45;
+  font-weight: 500;
+  color: var(--muted);
+  text-wrap: balance;
+}
+
+/* The device. It deliberately bleeds off the bottom of the canvas so a tall
+ * phone capture never has to be squashed into a shorter frame. */
+.device-wrap {
+  position: relative;
+  flex: 1 1 auto;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  min-height: 0;
+  overflow: hidden;
+  margin-top: 74px;
+}
+
+.device {
+  position: relative;
+  flex: 0 0 auto;
+  width: 900px;
+  border: 15px solid var(--raised);
+  border-bottom: none;
+  border-radius: 76px 76px 0 0;
+  outline: 3px solid var(--outline);
+  outline-offset: -18px;
+  overflow: hidden;
+  background: var(--ink);
+  box-shadow:
+    0 0 120px rgba(127, 176, 255, 0.20),
+    0 -20px 60px rgba(0, 0, 0, 0.45);
+}
+
+/* Scaled to the frame's width, never to its height.
+ *
+ * `object-fit: cover` against a fixed-height box crops whichever axis
+ * overflows, and for a phone capture that is the *width* — it eats ~6% off
+ * each side, which clips the app-bar title and the edges of the compliance
+ * rows. Letting the height follow the width means the only thing ever lost is
+ * the bottom of the screen, which is what the bleed is for. */
+.device img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* Shorter canvases (Play's 16:9) get a tighter header so the device still has
+ * room to read before it bleeds off the bottom. */
+.art.short header { padding: 76px 96px 0; }
+.art.short h1 { font-size: 68px; }
+.art.short .sub { font-size: 30px; margin-top: 22px; }
+.art.short .device-wrap { margin-top: 56px; }
+
+/* Shown instead of the capture until a raw screenshot exists. */
+.placeholder {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 22px;
+  height: 100%;
+  padding: 64px 44px;
+  background: var(--surface);
+  text-align: left;
+}
+
+.placeholder .tag {
+  align-self: flex-start;
+  padding: 8px 16px;
+  border: 2px dashed var(--outline);
+  border-radius: 999px;
+  font-size: 21px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--sky);
+}
+
+.placeholder .what {
+  font-size: 34px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.placeholder .state {
+  font-size: 25px;
+  line-height: 1.5;
+  color: var(--muted);
+}
+
+.placeholder .path {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 21px;
+  color: var(--green);
+  word-break: break-all;
+}
+
+/* --- index.html gallery only ------------------------------------------- */
+body.gallery {
+  overflow: auto;
+  background: #050b18;
+  padding: 40px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  color: var(--text);
+}
+
+body.gallery h2 { font-weight: 700; font-size: 20px; margin: 0 0 6px; }
+body.gallery .note { color: var(--muted); font-size: 14px; margin: 0 0 28px; }
+body.gallery .row { display: flex; gap: 20px; flex-wrap: wrap; }
+body.gallery figure { margin: 0; }
+body.gallery iframe { border: 1px solid var(--outline); border-radius: 10px; display: block; }
+body.gallery figcaption { font-size: 12px; color: var(--muted); margin-top: 8px; text-align: center; }
+body.gallery select { margin-bottom: 24px; padding: 6px 10px; }

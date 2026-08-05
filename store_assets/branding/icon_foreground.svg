@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+  <title>Passport Photo Studio adaptive icon foreground</title>
+  <defs>
+    <linearGradient id="tick" gradientUnits="userSpaceOnUse"
+      x1="616.0" y1="640.0"
+      x2="920.0" y2="944.0">
+      <stop offset="0" stop-color="#12B06E"/>
+      <stop offset="1" stop-color="#0E9760"/>
+    </linearGradient>
+    <linearGradient id="card" gradientUnits="userSpaceOnUse"
+      x1="220.0" y1="110.0" x2="780.0" y2="830.0">
+      <stop offset="0" stop-color="#FFFFFF"/>
+      <stop offset="1" stop-color="#EDF2FA"/>
+    </linearGradient>
+    <linearGradient id="figure" gradientUnits="userSpaceOnUse"
+      x1="350.0" y1="110.0" x2="650.0" y2="830.0">
+      <stop offset="0" stop-color="#1E5BD8"/>
+      <stop offset="1" stop-color="#154BBE"/>
+    </linearGradient>
+    <clipPath id="cardClip">
+      <rect x="220.0" y="110.0" width="560.0" height="720.0" rx="28.0"/>
+    </clipPath>
+  </defs>
+  <g transform="translate(89.55 122.64) scale(0.76949)">
+      <path d="M 290.0 64.0 L 174.0 64.0 L 174.0 180.0" fill="none" stroke="#7FB0FF" stroke-width="26.0" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M 710.0 64.0 L 826.0 64.0 L 826.0 180.0" fill="none" stroke="#7FB0FF" stroke-width="26.0" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M 290.0 876.0 L 174.0 876.0 L 174.0 760.0" fill="none" stroke="#7FB0FF" stroke-width="26.0" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M 710.0 876.0 L 826.0 876.0 L 826.0 760.0" fill="none" stroke="#7FB0FF" stroke-width="26.0" stroke-linecap="round" stroke-linejoin="round"/>
+      <rect x="220.0" y="110.0" width="560.0" height="720.0"
+            rx="28.0" fill="url(#card)"/>
+      <g clip-path="url(#cardClip)">
+        <ellipse cx="500.0" cy="974.0" rx="330.0" ry="270.0"
+                 fill="url(#figure)"/>
+        <ellipse cx="500.0" cy="380.0" rx="150.0" ry="180.0"
+                 fill="url(#figure)"/>
+        <path d="M 220.0 351.2 L 333.9 351.2
+                 M 666.1 351.2 L 780.0 351.2"
+              stroke="#1E5BD8" stroke-opacity="0.55" stroke-width="14"
+              stroke-linecap="round"/>
+      </g>
+      <circle cx="768.0" cy="792.0" r="169.0" fill="#0C2350"/>
+      <circle cx="768.0" cy="792.0" r="152.0" fill="url(#tick)"/>
+      <path d="M 706.0 796.0 L 752.0 844.0
+               L 836.0 746.0" fill="none" stroke="#FFFFFF"
+            stroke-width="42" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+</svg>

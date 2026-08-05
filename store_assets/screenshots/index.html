@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Passport Photo Studio — store screenshot set</title>
+    <link rel="stylesheet" href="screenshot.css" />
+  </head>
+  <body class="gallery">
+    <h2>Passport Photo Studio — store screenshots</h2>
+    <p class="note">
+      Frames render live from <code>screens.js</code>. Drop captures into
+      <code>raw/&lt;ios|android&gt;/</code> to replace the placeholders, then run
+      <code>./render.sh</code>.
+    </p>
+    <select id="platform"></select>
+    <div class="row" id="row"></div>
+
+    <script src="screens.js"></script>
+    <script>
+      const select = document.getElementById('platform');
+      const row = document.getElementById('row');
+
+      Object.entries(window.PPS_PLATFORMS).forEach(([key, p]) => {
+        const opt = document.createElement('option');
+        opt.value = key;
+        opt.textContent = `${p.label} — ${p.w}×${p.h}`;
+        select.appendChild(opt);
+      });
+
+      function draw() {
+        const key = select.value;
+        const p = window.PPS_PLATFORMS[key];
+        const previewH = 620;
+        const scale = previewH / p.h;
+        row.replaceChildren(
+          ...window.PPS_SCREENS.map((s) => {
+            const fig = document.createElement('figure');
+            const frame = document.createElement('iframe');
+            frame.src = `frame.html?screen=${s.slug}&platform=${key}`;
+            frame.width = p.w;
+            frame.height = p.h;
+            frame.scrolling = 'no';
+            frame.style.transform = `scale(${scale})`;
+            frame.style.transformOrigin = 'top left';
+            const shell = document.createElement('div');
+            shell.style.width = p.w * scale + 'px';
+            shell.style.height = previewH + 'px';
+            shell.style.overflow = 'hidden';
+            shell.appendChild(frame);
+            fig.appendChild(shell);
+            const cap = document.createElement('figcaption');
+            cap.textContent = s.slug;
+            fig.appendChild(cap);
+            return fig;
+          })
+        );
+      }
+
+      select.onchange = draw;
+      draw();
+    </script>
+  </body>
+</html>

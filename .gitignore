@@ -1,0 +1,93 @@
+# Miscellaneous
+*.class
+*.log
+*.pyc
+*.swp
+.DS_Store
+.atom/
+.build/
+.buildlog/
+.history
+.svn/
+.swiftpm/
+migrate_working_dir/
+
+# IntelliJ related
+*.iml
+*.ipr
+*.iws
+.idea/
+
+# The .vscode folder contains launch configuration and tasks you configure in
+# VS Code which you may wish to be included in version control, so this line
+# is commented out by default.
+#.vscode/
+
+# Flutter/Dart/Pub related
+**/doc/api/
+**/ios/Flutter/.last_build_id
+.dart_tool/
+.flutter-plugins-dependencies
+.pub-cache/
+.pub/
+/build/
+/coverage/
+
+# Symbolication related
+app.*.symbols
+
+# Obfuscation related
+app.*.map.json
+
+# Android Studio will place build artifacts here
+/android/app/debug
+/android/app/profile
+/android/app/release
+
+# Android — generated and machine-local. `local.properties` carries the
+# developer's absolute SDK path, and this repo has to be public for the store's
+# privacy-policy URL to resolve for an unauthenticated fetch.
+**/android/.gradle
+**/android/captures/
+**/android/local.properties
+**/android/**/GeneratedPluginRegistrant.java
+
+# Android release signing — never commit these.
+**/android/key.properties
+**/android/*.jks
+**/android/*.keystore
+
+# iOS
+/ios/Pods/
+/ios/.symlinks/
+/ios/Flutter/Flutter.podspec
+
+# iOS — generated build configuration and build products. Generated.xcconfig
+# and flutter_export_environment.sh both say "do not check into version
+# control" in their own first line; they carry local absolute paths, and
+# flutter_export_environment.sh also records the DART_DEFINES of the last
+# build, which is how SCREENSHOT_MODE would end up in the history.
+#
+# Debug.xcconfig and Release.xcconfig are deliberately NOT here even though the
+# security audit listed them: they hold two relative `#include` lines and no
+# local path, Runner.xcodeproj names them as its base configuration, and
+# nothing regenerates them, so ignoring them would break a fresh clone.
+**/ios/Flutter/Generated.xcconfig
+**/ios/Flutter/flutter_export_environment.sh
+**/ios/Flutter/ephemeral/
+**/ios/Flutter/App.framework
+**/ios/Flutter/Flutter.framework
+**/ios/Flutter/flutter_assets/
+
+# Internal QA artefacts — kept on disk, kept out of the public repo.
+# The repo has to be public for the store's privacy-policy URL to resolve for an
+# unauthenticated fetch, and these audit reports cite absolute developer paths in
+# nearly every finding and describe the app's security reasoning in detail.
+# Founder decision, 2026-08-05. Archive them outside the repo, do not delete.
+/docs/audits/
+
+# Store credentials / build outputs
+*.p8
+*.p12
+/store_assets/screenshots/raw/
+/store_assets/screenshots/out/

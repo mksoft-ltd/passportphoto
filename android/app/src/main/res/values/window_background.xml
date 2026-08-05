@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  The colour behind the Flutter UI between the splash screen and the first
+  frame. It must equal BrandColors.paper in lib/app/theme.dart, or the app
+  flashes the platform's default white-grey on every cold start.
+
+  Kept out of colors.xml on purpose: flutter_launcher_icons owns that file and
+  rewrites it whenever the icon is regenerated. Android merges every XML file
+  in values/, so this one survives.
+-->
+<resources>
+    <color name="passport_window_background">#F7F9FC</color>
+</resources>

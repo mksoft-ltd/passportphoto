@@ -1,0 +1,35 @@
+Passport Photo Studio - notes for App Review
+Froggy Eye Ltd - v1.0.0 - com.froggyeye.passportphoto
+
+WHAT THE APP DOES
+The user picks a country and document type (UK passport, US visa, and so on), takes a photo with the in-app camera or picks one from their library, and the app crops and scales it to that document's published dimensions and resolution. It then runs seven compliance checks and shows a pass or fail with a plain-English reason for each: single face detected, eyes open, looking forward, face size within spec, eye line within spec, background uniform, photo fully captured.
+
+NO ACCOUNT IS REQUIRED
+There is no sign-in, registration or backend anywhere in the app, so no demo account is needed. Every feature is reachable from a fresh install.
+
+HOW TO TEST (about two minutes)
+1. Launch the app. The Home screen shows the currently selected document; tap it to open the picker and choose any of the 30 specs. Nothing in the picker is locked; specs are never gated.
+2. Tap "Take a new photo" and allow camera access, or tap "Pick from gallery" and choose any photo containing a face. On a simulator the gallery route is the quicker one.
+3. The Result screen shows the cropped photo, the spec summary and the seven-check compliance report. A deliberately poor photo (off-centre, busy background, head turned) is the fastest way to see failing checks and their explanations.
+4. Tap "View 4x6 inch print sheet" to see the print layout.
+5. Free saves are watermarked and downscaled. Tapping a Pro-only action opens the paywall.
+
+IN-APP PURCHASE
+One non-consumable product, com.froggyeye.passportphoto.pro ("Passport Photo Studio Pro"). It unlocks the full-resolution unwatermarked export and the 4x6 inch print sheet. The displayed price comes from StoreKit - no price string is hardcoded. "Restore purchase" sits in the Home screen app bar and is reachable on every launch without an account. The free tier is a working product: every country, capture, automatic crop, the complete compliance report, the print-sheet preview, and a watermarked save.
+
+PERMISSIONS AND WHY EACH IS REQUESTED
+- Camera (NSCameraUsageDescription): to take the document photo with the on-screen face guide. Optional - the app offers the gallery import route if camera access is declined.
+- Photo library, read (NSPhotoLibraryUsageDescription): to choose an existing photo to crop.
+- Photo library, add (NSPhotoLibraryAddUsageDescription): to save the finished photo and the print sheet back to the user's own library. This is the only way for the user to get the file to a printer.
+No other permission is requested: no location, contacts, microphone or background use. No ATT prompt is shown and no NSUserTrackingUsageDescription is declared.
+
+PRIVACY AND NETWORK USE
+No photograph ever leaves the device. Face detection uses Google ML Kit with the model bundled inside the app binary, and the app's own code contains no API client and no upload path. Two bundled components do use the network: the store's in-app purchase library, and ML Kit, which reports its own diagnostics and a non-advertising device identifier to Google. That is declared in the App Privacy answers - Data Not Linked to You: Device ID, Product Interaction, Performance Data, Other Diagnostic Data, tracking set to No on every row - and in the privacy policy.
+
+ABOUT THE CLAIMS IN THE LISTING
+Neither the listing nor the app claims that any authority will accept a photo; both state only what was measured against a published specification. Where an authority publishes a figure it is used as published; where none exists it is derived from ICAO Doc 9303 portrait geometry, and the app ships a per-spec source list recording which is which.
+
+CONTENT
+No user-generated content, no sharing, no social or community features, no ads, and no external links other than the privacy policy. The person shown in the App Store screenshots is an illustration drawn by the app itself, not a photograph of a real person.
+
+Contact: info@froggyeye.com

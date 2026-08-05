@@ -1,0 +1,77 @@
+{
+  "_note": "Passport Photo Studio v1.0.0. NOT 'No data collected'. The bundled google_mlkit_face_detection SDK links MLKitCommon, whose own PrivacyInfo.xcprivacy declares collection of Device ID, Product Interaction, Performance Data and Other Diagnostic Data, and whose binary carries a live Clearcut telemetry client to play.googleapis.com/log. Both stores require data collected by bundled third-party SDKs to be declared. No photograph, and no part of one, is ever collected or transmitted. App Store Connect's appDataUsages endpoint is not writable by the API key, so these answers are entered and published by hand in ASC (App Privacy -> Publish); this file is the authoritative source for those answers.",
+  "data_protections": [
+    {
+      "id": "DATA_NOT_LINKED_TO_YOU",
+      "data_types": [
+        {
+          "id": "IDENTIFIERS_DEVICE_ID",
+          "category": "Identifiers",
+          "name": "Device ID",
+          "purposes": [
+            "ANALYTICS",
+            "APP_FUNCTIONALITY"
+          ],
+          "linked_to_user": false,
+          "used_for_tracking": false,
+          "source": "ML Kit (MLKitCommon) telemetry"
+        },
+        {
+          "id": "USAGE_DATA_PRODUCT_INTERACTION",
+          "category": "Usage Data",
+          "name": "Product Interaction",
+          "purposes": [
+            "ANALYTICS",
+            "APP_FUNCTIONALITY"
+          ],
+          "linked_to_user": false,
+          "used_for_tracking": false,
+          "source": "ML Kit (MLKitCommon) telemetry"
+        },
+        {
+          "id": "DIAGNOSTICS_PERFORMANCE_DATA",
+          "category": "Diagnostics",
+          "name": "Performance Data",
+          "purposes": [
+            "ANALYTICS",
+            "APP_FUNCTIONALITY"
+          ],
+          "linked_to_user": false,
+          "used_for_tracking": false,
+          "source": "ML Kit (MLKitCommon) telemetry"
+        },
+        {
+          "id": "DIAGNOSTICS_OTHER_DIAGNOSTIC_DATA",
+          "category": "Diagnostics",
+          "name": "Other Diagnostic Data",
+          "purposes": [
+            "ANALYTICS"
+          ],
+          "linked_to_user": false,
+          "used_for_tracking": false,
+          "source": "ML Kit (MLKitCommon) telemetry"
+        }
+      ]
+    }
+  ],
+  "data_linked_to_you": [],
+  "tracking": {
+    "used_for_tracking": false,
+    "att_prompt_shown": false,
+    "ns_user_tracking_usage_description": null,
+    "advertising_identifier_accessed": false
+  },
+  "not_collected": [
+    "Photos or videos (processed on device only, never transmitted)",
+    "Contact info",
+    "Health & fitness",
+    "Financial info",
+    "Location",
+    "Contacts",
+    "User content",
+    "Search history",
+    "Browsing history",
+    "Sensitive info",
+    "Purchases (handled by the store, not read by the app)"
+  ]
+}

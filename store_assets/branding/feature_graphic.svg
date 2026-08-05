@@ -1,0 +1,92 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="500" viewBox="0 0 1024 500">
+  <title>Passport Photo Studio - Google Play feature graphic</title>
+  <defs>
+    <linearGradient id="plate" gradientUnits="userSpaceOnUse"
+      x1="0" y1="0" x2="1024" y2="500">
+      <stop offset="0" stop-color="#173F8E"/>
+      <stop offset="0.55" stop-color="#0C2350"/>
+      <stop offset="1" stop-color="#071634"/>
+    </linearGradient>
+    <linearGradient id="tick" gradientUnits="userSpaceOnUse"
+      x1="616.0" y1="640.0"
+      x2="920.0" y2="944.0">
+      <stop offset="0" stop-color="#12B06E"/>
+      <stop offset="1" stop-color="#0E9760"/>
+    </linearGradient>
+    <linearGradient id="card" gradientUnits="userSpaceOnUse"
+      x1="220.0" y1="110.0" x2="780.0" y2="830.0">
+      <stop offset="0" stop-color="#FFFFFF"/>
+      <stop offset="1" stop-color="#EDF2FA"/>
+    </linearGradient>
+    <linearGradient id="figure" gradientUnits="userSpaceOnUse"
+      x1="350.0" y1="110.0" x2="650.0" y2="830.0">
+      <stop offset="0" stop-color="#1E5BD8"/>
+      <stop offset="1" stop-color="#154BBE"/>
+    </linearGradient>
+    <clipPath id="cardClip">
+      <rect x="220.0" y="110.0" width="560.0" height="720.0" rx="28.0"/>
+    </clipPath>
+  </defs>
+  <rect width="1024" height="500" fill="url(#plate)"/>
+  <path d="M 64 468 L 64 486" stroke="#7FB0FF" stroke-opacity="0.3" stroke-width="3" stroke-linecap="round"/>
+  <path d="M 98 476 L 98 486" stroke="#7FB0FF" stroke-opacity="0.16" stroke-width="3" stroke-linecap="round"/>
+  <path d="M 132 476 L 132 486" stroke="#7FB0FF" stroke-opacity="0.16" stroke-width="3" stroke-linecap="round"/>
+  <path d="M 166 476 L 166 486" stroke="#7FB0FF" stroke-opacity="0.16" stroke-width="3" stroke-linecap="round"/>
+  <path d="M 200 468 L 200 486" stroke="#7FB0FF" stroke-opacity="0.3" stroke-width="3" stroke-linecap="round"/>
+  <path d="M 234 476 L 234 486" stroke="#7FB0FF" stroke-opacity="0.16" stroke-width="3" stroke-linecap="round"/>
+  <path d="M 268 476 L 268 486" stroke="#7FB0FF" stroke-opacity="0.16" stroke-width="3" stroke-linecap="round"/>
+  <path d="M 302 476 L 302 486" stroke="#7FB0FF" stroke-opacity="0.16" stroke-width="3" stroke-linecap="round"/>
+  <path d="M 336 468 L 336 486" stroke="#7FB0FF" stroke-opacity="0.3" stroke-width="3" stroke-linecap="round"/>
+  <path d="M 370 476 L 370 486" stroke="#7FB0FF" stroke-opacity="0.16" stroke-width="3" stroke-linecap="round"/>
+  <path d="M 404 476 L 404 486" stroke="#7FB0FF" stroke-opacity="0.16" stroke-width="3" stroke-linecap="round"/>
+  <path d="M 438 476 L 438 486" stroke="#7FB0FF" stroke-opacity="0.16" stroke-width="3" stroke-linecap="round"/>
+  <path d="M 472 468 L 472 486" stroke="#7FB0FF" stroke-opacity="0.3" stroke-width="3" stroke-linecap="round"/>
+  <path d="M 506 476 L 506 486" stroke="#7FB0FF" stroke-opacity="0.16" stroke-width="3" stroke-linecap="round"/>
+  <path d="M 540 476 L 540 486" stroke="#7FB0FF" stroke-opacity="0.16" stroke-width="3" stroke-linecap="round"/>
+  <path d="M 574 476 L 574 486" stroke="#7FB0FF" stroke-opacity="0.16" stroke-width="3" stroke-linecap="round"/>
+  <path d="M 608 468 L 608 486" stroke="#7FB0FF" stroke-opacity="0.3" stroke-width="3" stroke-linecap="round"/>
+  <path d="M 642 476 L 642 486" stroke="#7FB0FF" stroke-opacity="0.16" stroke-width="3" stroke-linecap="round"/>
+  <path d="M 676 476 L 676 486" stroke="#7FB0FF" stroke-opacity="0.16" stroke-width="3" stroke-linecap="round"/>
+  <path d="M 710 476 L 710 486" stroke="#7FB0FF" stroke-opacity="0.16" stroke-width="3" stroke-linecap="round"/>
+  <path d="M 744 468 L 744 486" stroke="#7FB0FF" stroke-opacity="0.3" stroke-width="3" stroke-linecap="round"/>
+  <path d="M 778 476 L 778 486" stroke="#7FB0FF" stroke-opacity="0.16" stroke-width="3" stroke-linecap="round"/>
+  <path d="M 812 476 L 812 486" stroke="#7FB0FF" stroke-opacity="0.16" stroke-width="3" stroke-linecap="round"/>
+  <path d="M 846 476 L 846 486" stroke="#7FB0FF" stroke-opacity="0.16" stroke-width="3" stroke-linecap="round"/>
+  <path d="M 880 468 L 880 486" stroke="#7FB0FF" stroke-opacity="0.3" stroke-width="3" stroke-linecap="round"/>
+  <path d="M 914 476 L 914 486" stroke="#7FB0FF" stroke-opacity="0.16" stroke-width="3" stroke-linecap="round"/>
+  <path d="M 948 476 L 948 486" stroke="#7FB0FF" stroke-opacity="0.16" stroke-width="3" stroke-linecap="round"/>
+  <path d="M 982 476 L 982 486" stroke="#7FB0FF" stroke-opacity="0.16" stroke-width="3" stroke-linecap="round"/>
+  <g transform="translate(1.74 70.95) scale(0.35385)">
+      <path d="M 290.0 64.0 L 174.0 64.0 L 174.0 180.0" fill="none" stroke="#7FB0FF" stroke-width="26.0" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M 710.0 64.0 L 826.0 64.0 L 826.0 180.0" fill="none" stroke="#7FB0FF" stroke-width="26.0" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M 290.0 876.0 L 174.0 876.0 L 174.0 760.0" fill="none" stroke="#7FB0FF" stroke-width="26.0" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M 710.0 876.0 L 826.0 876.0 L 826.0 760.0" fill="none" stroke="#7FB0FF" stroke-width="26.0" stroke-linecap="round" stroke-linejoin="round"/>
+      <rect x="220.0" y="110.0" width="560.0" height="720.0"
+            rx="28.0" fill="url(#card)"/>
+      <g clip-path="url(#cardClip)">
+        <ellipse cx="500.0" cy="974.0" rx="330.0" ry="270.0"
+                 fill="url(#figure)"/>
+        <ellipse cx="500.0" cy="380.0" rx="150.0" ry="180.0"
+                 fill="url(#figure)"/>
+        <path d="M 220.0 351.2 L 333.9 351.2
+                 M 666.1 351.2 L 780.0 351.2"
+              stroke="#1E5BD8" stroke-opacity="0.55" stroke-width="14"
+              stroke-linecap="round"/>
+      </g>
+      <circle cx="768.0" cy="792.0" r="169.0" fill="#0C2350"/>
+      <circle cx="768.0" cy="792.0" r="152.0" fill="url(#tick)"/>
+      <path d="M 706.0 796.0 L 752.0 844.0
+               L 836.0 746.0" fill="none" stroke="#FFFFFF"
+            stroke-width="42" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+  <g font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif">
+    <text x="392" y="176" fill="#EAF0FA" font-size="62" font-weight="800" letter-spacing="-1.6">Passport Photo</text>
+    <text x="392" y="248" fill="#EAF0FA" font-size="62" font-weight="800" letter-spacing="-1.6">Studio</text>
+    <text x="392" y="308" fill="#7FB0FF" font-size="27" font-weight="600">Print-ready photos for 21 countries.</text>
+    <g transform="translate(392 340)">
+      <rect x="0" y="0" rx="21" ry="21" width="412" height="46" fill="#12B06E" fill-opacity="0.14"
+            stroke="#12B06E" stroke-opacity="0.45"/>
+      <text x="22" y="31" fill="#12B06E" font-size="21" font-weight="700">No ads. Nothing leaves your phone.</text>
+    </g>
+  </g>
+</svg>

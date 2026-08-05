@@ -1,0 +1,7 @@
+First release.
+
+- 30 document specs across 21 countries, plus ICAO Doc 9303 and Schengen generic fallbacks. Every spec is free.
+- Camera capture with a face guide sized to the document you picked, or import a photo from your library.
+- Automatic crop and scale to the exact dimensions and resolution the spec asks for.
+- A seven-point compliance report with a plain-English reason for every check.
+- Pro unlocks the full-resolution unwatermarked export and the 4x6 inch print sheet, for one payment.

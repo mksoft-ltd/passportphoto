@@ -1,0 +1,109 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-feature android:name="android.hardware.camera" android:required="false" />
+
+    <!-- The camera plugin declares RECORD_AUDIO for video capture. This app
+         only ever takes stills (CameraController is built with
+         enableAudio: false), so the microphone is dropped from the merged
+         manifest rather than shipped and left unexplained on the store
+         listing. -->
+    <uses-permission android:name="android.permission.RECORD_AUDIO"
+        tools:node="remove" />
+
+    <!-- No media-read permission is declared, deliberately, and neither
+         READ_MEDIA_IMAGES nor READ_EXTERNAL_STORAGE was ever contributed by a
+         plugin — both were ours.
+
+         The gallery flow does not need one. `image_picker` reaches the library
+         through `Intent.ACTION_GET_CONTENT` (and through the system photo
+         picker when `useAndroidPhotoPicker` is on); both hand back a single
+         content URI with a per-item read grant, which is the point of those
+         APIs. The only permission `image_picker_android` ever checks or
+         requests is CAMERA. `saver_gallery` writes through MediaStore, which
+         needs no permission from API 29 up.
+
+         Keeping READ_MEDIA_IMAGES would also have obliged us to file Play's
+         Photo and Video Permissions declaration, which gates rollout — a
+         review commitment taken on for a permission nothing reads. -->
+
+    <!-- READ_EXTERNAL_STORAGE is NOT ours and cannot simply be deleted: the
+         manifest merger *implies* it because `camera_android_camerax` declares
+         WRITE_EXTERNAL_STORAGE (maxSdkVersion 28) — see
+         `build/app/outputs/logs/manifest-merger-release-report.txt`, which
+         reports it as "IMPLIED … reason: io.flutter.plugins.camerax requested
+         WRITE_EXTERNAL_STORAGE". The implied form carries no maxSdkVersion, so
+         without this line it is declared unbounded.
+
+         Re-declaring it capped at 32 keeps the declared surface honest: the
+         permission stops applying at API 33 anyway, and nothing in this app
+         reads media by path — the picker gets a per-item URI grant. It is left
+         declared rather than removed with tools:node="remove" because the
+         camera plugin owns the write half on API <= 28 and that path cannot be
+         tested here (no pre-29 system image installed), so silently narrowing
+         another plugin's permission is a change we cannot verify.
+
+         Full table with justifications: docs/PRODUCT_SPEC.md. -->
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"
+        android:maxSdkVersion="32"
+        tools:replace="android:maxSdkVersion" />
+
+    <!-- Backup is off on purpose. The only things that would travel are the
+         `pro_unlocked` flag — a cache of a store purchase, which must not be
+         restorable onto a device signed into a different store account — and
+         `last_used_spec_id`. "Restore purchase" on the home screen is the
+         supported way back to Pro on a new device. `allowBackup` covers
+         API 30 and below; `dataExtractionRules` states the same for API 31+
+         and also closes device-to-device transfer, which Auto Backup's switch
+         does not govern. `fullBackupContent` is deliberately absent: it only
+         selects which files a backup includes, and there is no backup. -->
+    <application
+        android:label="Passport Photo"
+        android:name="${applicationName}"
+        android:icon="@mipmap/ic_launcher"
+        android:allowBackup="false"
+        android:dataExtractionRules="@xml/data_extraction_rules">
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:launchMode="singleTop"
+            android:taskAffinity=""
+            android:theme="@style/LaunchTheme"
+            android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"
+            android:hardwareAccelerated="true"
+            android:windowSoftInputMode="adjustResize">
+            <!-- Specifies an Android theme to apply to this Activity as soon as
+                 the Android process has started. This theme is visible to the user
+                 while the Flutter UI initializes. After that, this theme continues
+                 to determine the Window background behind the Flutter UI. -->
+            <meta-data
+              android:name="io.flutter.embedding.android.NormalTheme"
+              android:resource="@style/NormalTheme"
+              />
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+        </activity>
+        <!-- Don't delete the meta-data below.
+             This is used by the Flutter tool to generate GeneratedPluginRegistrant.java -->
+        <meta-data
+            android:name="flutterEmbedding"
+            android:value="2" />
+        <!-- ML Kit on-device face detection model auto-download. -->
+        <meta-data
+            android:name="com.google.mlkit.vision.DEPENDENCIES"
+            android:value="face" />
+    </application>
+    <!-- Required to query activities that can process text, see:
+         https://developer.android.com/training/package-visibility and
+         https://developer.android.com/reference/android/content/Intent#ACTION_PROCESS_TEXT.
+
+         In particular, this is used by the Flutter engine in io.flutter.plugin.text.ProcessTextPlugin. -->
+    <queries>
+        <intent>
+            <action android:name="android.intent.action.PROCESS_TEXT"/>
+            <data android:mimeType="text/plain"/>
+        </intent>
+    </queries>
+</manifest>

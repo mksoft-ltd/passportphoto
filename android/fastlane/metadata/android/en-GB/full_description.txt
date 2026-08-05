@@ -1,0 +1,50 @@
+Skip the booth. Passport Photo Studio is a passport photo app that crops your photo to the right passport size and checks it against the country's own spec before you print it.
+
+Where a simple passport photo maker hands you a crop and wishes you luck, this one shows its working: seven checks, each with a pass or fail and a plain-English reason.
+
+- Single face detected
+- Eyes open
+- Looking forward
+- Face size within spec
+- Eye line within spec
+- Background uniform
+- Photo fully captured
+
+If something is wrong, you find out now, with the reason, instead of at the counter.
+
+YOUR PHOTO NEVER LEAVES YOUR PHONE
+Face detection runs on your device against a model bundled inside the app. There is no upload, no server and no account. The app never retouches, beautifies or replaces the background: the photo stays the photo.
+
+HOW IT WORKS
+1. Pick the country and document: passport, visa, ID card or driving licence.
+2. Take a photo using the on-screen face guide, or choose one from your library.
+3. Read the compliance report.
+4. Export the print-ready file, or a 4x6 inch sheet to take to any photo counter.
+
+EVERY SPEC IS FREE
+30 document specs across 21 countries, plus ICAO Doc 9303 and Schengen generic fallbacks for everywhere else. Nothing is locked behind the paywall. Capture, the automatic crop, the full compliance report and the print-sheet preview are all free, along with a watermarked save so you can see exactly what you would be buying.
+
+Whether you need a UK passport photo at 35x45mm, a US passport photo at 2x2 inch, a Schengen visa photo, an India passport photo or a China visa photo, the spec is already in the app, along with ID card and driving licence photo sizes for the countries that publish them.
+
+Countries included: United Kingdom, United States, Canada, Australia, New Zealand, Ireland, Germany, France, Spain, Italy, Netherlands, Sweden, Switzerland, Japan, China, India, Singapore, United Arab Emirates, Brazil, Mexico and South Africa.
+
+ONE PAYMENT. NO SUBSCRIPTION.
+Passport Photo Studio Pro is a single one-time purchase. It unlocks the full-resolution unwatermarked export and the 4x6 inch print sheet, for unlimited photos, for every country, for as long as you own the app. No subscription, no per-photo charge, no trial that expires.
+
+SIZED TO THE SPEC
+A biometric photo is simply a photo that meets a measured spec, and this is how you check that yours does. Every entry carries the real numbers: the photo size, the face-height band, where the eye line has to sit, the required background and the output resolution. The crop is calculated from your own face measurements, then resampled to the exact pixel dimensions the document asks for: 35x45mm for the UK and most of Europe, 2x2 inch for the United States and India.
+
+WHO IT IS FOR
+- Anyone facing a passport renewal, a visa application or an ID photo who does not want to find a photo booth.
+- Parents taking a baby or child passport photo, where a booth is impractical and it takes a few attempts.
+- Frequent visa applicants who need a different spec each time.
+- Anyone who would rather print passport photos at home, or hand a 4x6 inch sheet to a shop.
+
+WHAT WE DO NOT DO
+No ads. No account. No photo upload. And no promise that an authority will accept your photo, because nobody can honestly make one. What the app does is measure your photo against the published spec and tell you what it found.
+
+Where an authority publishes a figure, the app uses it. Where none is published, the figure is derived from ICAO Doc 9303 portrait geometry, and the app's bundled source list says which is which.
+
+Questions: info@froggyeye.com
+
+(c) 2026 Froggy Eye Ltd
