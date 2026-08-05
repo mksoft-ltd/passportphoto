@@ -19,7 +19,7 @@ Name fallbacks if "Passport Photo Studio" is taken on a store: "Passport & ID Ph
 | 5 | metadata | growth-monetization → release-manager | **done — 5a (growth/ASO) and 5b (release metadata) both complete**. `docs/ASO.md` and `docs/MONETIZATION.md` written; `store_assets/screenshot_specs.md`, `screenshots/screens.js`, `screenshots/render.sh` and `integration_test/screenshots_test.dart` updated to match. **Store text must come from `docs/ASO.md` §9 verbatim** — Apple name `Passport Photo Studio` / subtitle `ID & visa photos. One payment.` / two 95-char keyword fields (en-GB and en-US are separate localisations, set both) / Photo & Video + Utilities; Play title same / short description `Skip the booth. Passport, visa and ID photos checked against the spec.` / Photography. §9 also carries the cleared-claims and forbidden-claims lists — the forbidden list includes every acceptance promise **and** "no tracking" / "everything runs offline" / "No data collected". **SEC-11 closed:** shot `04_home`'s subheadline is gone, replaced by `03_home` "No ads. No account. Your photo is never uploaded." **Screenshot set reordered and rewritten:** shots 3 and 4 swapped (slugs renamed `03_home` / `04_picker` — privacy outranks the country count, which is the comparison this app loses against rivals advertising "150+ countries"), shot 01's headline "Passport photos approved first time" **withdrawn as an acceptance promise**, shot 02's "£10–15" currency claim dropped, stale "six checks" → seven everywhere incl. `demo_data.dart`'s detached doc comment (RR-3). Stale `out/*.png` renders deleted; raws renamed, and all five still need recapture per RR-1. **SEC-4 call: CAP the locked preview at a 640 px long edge** — the digital-upload path (now the majority for UK renewals) makes the free preview a usable substitute for the £4.99 file; one downscale on the locked path, owed before submission — **implemented and pinned in stage 4d**. Pricing £4.99 confirmed unchanged. **Two in-app copy findings:** the paywall's hardcoded "A photo booth charges around £6" shipped one £ figure to every storefront and was a price claim about a third party — **fixed** in `paywall_screen.dart:100` ("charges several times more"); and the paywall screenshot's "£4.99" comes from `screenshots_test.dart`'s `_harnessPrice`, not a store, so **stage 7 must confirm the IAP is created at the £4.99 price point and renders as `£4.99` in en-GB before upload**. Gates re-run after the edits: `flutter analyze` clean · `flutter test` **285 passed, 0 skipped**. Raws were recaptured at 18:26 and now show 7/7, so RR-1 looks closed for iOS; `raw/android/` is still empty by design and the Play set renders "capture missing" until stage 7 shoots it. All 15 frames re-rendered and reviewed. **5b (release-manager, 2026-08-05):** full fastlane metadata written for **both** English localisations — `ios/fastlane/metadata/{en-GB,en-US}/` (name 21, subtitle 30/30, keywords 95/100 each and locale-specific per ASO §9, promotional_text 168/170, description 3216/3217 of 4000, release_notes, support/marketing `https://froggyeye.com`, privacy_url), `metadata/copyright.txt` + `primary_category.txt` (`PHOTO_AND_VIDEO`) + `secondary_category.txt` (`UTILITIES`), `review_information/` (Kevin Lam · info@froggyeye.com · **+447415533188** · demo_account_required=false · notes 3998/4000), and `android/fastlane/metadata/android/{en-GB,en-US}/` (title, short_description 70/80 verbatim, full_description 3656/3658, empty `video.txt`, `changelogs/1.txt` + `default.txt` 403/500). Every field character-counted and within cap; grepped clean against ASO §9's forbidden-claims list (no acceptance promise, no "no tracking"/"offline"/"No data collected", no agency names). **Apple privacy answers are the CORRECTED ones** in `ios/fastlane/app_privacy_details.json`: Data Not Linked to You → Device ID, Product Interaction, Performance Data, Other Diagnostic Data; tracking No on every row; photos explicitly not collected. `android/fastlane/data_safety_answers.md` written with the matching Play answers plus Advertising ID = No, App access = No login, IARC "All other app types", target audience 18+. **Three items for stage 6/7, in priority order: (1) `READ_MEDIA_IMAGES` in the release manifest means Play's separate Photo and Video Permissions declaration is required before rollout — or drop the permission if `image_picker` already routes through the system photo picker; (2) `docs/PRODUCT_SPEC.md` says ML Kit data is "not shared" while the data-safety sheet declares it shared with Google — reconcile before submitting; (3) stage 7 must push the repo to `mksoft-ltd/passportphoto` and confirm the privacy URL returns 200, since the metadata already points at it.** | 2026-08-05 |
 | 6 | compliance | app-store-review-auditor | **FAIL — 3 Blocker · 3 High · 3 Medium · 5 Low.** Full report: `docs/audits/store-compliance.md`. **C-1 (Blocker):** the privacy URL in both iOS localisations and in `data_safety_answers.md` §1 returns **404** — `mksoft-ltd/passportphoto` does not exist yet. **C-2 (Blocker, NEW — not on any hand-off list):** `AppInfo.privacyPolicyUrl` (`lib/core/constants/app_info.dart:14`) points at `mksoft-ltd/**passport_photo_app**` while the store metadata points at `mksoft-ltd/**passportphoto**` — two different repos. Stage 5's instruction to "push to `mksoft-ltd/passportphoto`" closes C-1 and leaves the **in-app** link permanently dead; it is the "Privacy policy" button at `paywall_screen.dart:349`, visible in screenshot `05_pro` which is also Apple's IAP review screenshot. Needs a code change + rebuild, not a console fix. **C-3 (Blocker):** all five `store_assets/screenshots/out/android/*.png` are **"CAPTURE MISSING" placeholders** — correct 1080×1920, correct names, ~790KB, rendered *after* the iOS set, and every one shows a branded card naming the screen and printing `raw/android/01_result.png`. `raw/android/` holds only `.gitkeep`. I opened them; `ls` cannot tell. The **iOS set is genuinely fine** — opened `ios69/01_result`, `03_home`, `05_pro`: real captures, light appearance, "7 / 7 passed", paywall correctly in its locked pre-purchase state. **H-1:** `ITSAppUsesNonExemptEncryption` is absent from `ios/Runner/Info.plist` (grepped all of `ios/`) → "Missing Compliance" blocks *every* upload until answered by hand; correct answer is `false` (no bundled crypto lib — Pods are ML Kit/Google standard-TLS consumers only). **H-2:** `android/fastlane/data_safety_answers.md` still describes `READ_MEDIA_IMAGES` in three places (preamble manifest list, §8 "Photo and video permissions: Required", §9 reviewer notes) though stage 4d removed it — verified off the **release merged manifest parsed as XML**: 7 permissions, no `READ_MEDIA_IMAGES`, no `RECORD_AUDIO`, no `AD_ID`, targetSdk 36, allowBackup=false. Nothing uploads that sheet, so a human would type it in and file an unnecessary Photo & Video Permissions declaration (gates rollout) plus a reviewer note that contradicts the APK. **H-3:** `05_pro` shows "Unlock Pro — £4.99" injected by `screenshots_test.dart:233` `_harnessPrice`, and line 227 records that en-GB and en-US **share one screenshot set** — so the US listing would advertise a GBP price. The *app* is right (`displayPrice` has no literal fallback, falls back to a bare "Unlock Pro"); only the screenshot is not. Fix: create the IAP first, then capture per-storefront, or ship en-US four shots per stage 2's standing rule. **Mediums:** raw-markdown privacy URL (`text/plain`, Apple 5.1.1 risk — prefer GitHub Pages); store art absent from the paths `deliver`/`supply` read and **no 512×512 Play icon exists** (feature graphic is correct at 1024×500 opaque); Android capture never run. **Verified clean, tested not assumed:** spec claim is exact (30 specs / 21 real countries + ICAO + Schengen, doc types match "passport, visa, ID card or driving licence"); zero forbidden claims in shipped store text (only hits are `screenshot_specs.md`'s own guidance prose); every character count within cap measured in Python; IAP is native `in_app_purchase` non-consumable with restore reachable from the home app bar on every launch and `completePurchase` always called; **no subscriptions so 3.1.2(c) is N/A**; no account → deletion + Sign in with Apple both N/A; no UGC; Apple label ↔ Play sheet ↔ code all agree and the ML Kit disclosure is adequate under 5.1.2; no ATT/ad-ID/ads/analytics SDK; no `http://`, no secrets; `screenshotMode` is `!kReleaseMode`-folded; `TARGETED_DEVICE_FAMILY = 1` on all three configs so no empty iPad slot; review_information/ complete incl. phone. **Apple 4+ / Play Everyone / Play target audience 18+ are all supportable and not in conflict.** | 2026-08-05 |
 | 6b | compliance fix round | flutter-architect | **done — C-2, H-1 and H-2 resolved.** **C-2:** `AppInfo.privacyPolicyUrl` now reads `https://raw.githubusercontent.com/mksoft-ltd/passportphoto/refs/heads/main/PRIVACY_POLICY.md`, matching both iOS localisations and `data_safety_answers.md` §1 — one repo name across all four places. New `test/privacy_url_consistency_test.dart` reads the fastlane files off disk and pins the constant against them, so the drift cannot recur silently. **H-1:** `ITSAppUsesNonExemptEncryption</key><false/>` added to `ios/Runner/Info.plist`; `plutil -lint` OK and `PlistBuddy` confirms the key is `false` in the **built** `Runner.app/Info.plist`, not just the source. **H-2:** all three `READ_MEDIA_IMAGES` references in `android/fastlane/data_safety_answers.md` corrected — the preamble now lists the real 7-permission release manifest, §8 answers **"Photo and video permissions: Not applicable — do not file the declaration"** with the system-photo-picker per-item URI grant as the reason, and §9's reviewer bullet no longer names the permission. **Gate: `flutter analyze` clean · `flutter test` 297 passed, 0 failed, 0 skipped (293 + 4 new) · `flutter build ios --debug --no-codesign` OK.** No git commit. **Still owned by stage 7: C-1** (create/push `mksoft-ltd/passportphoto` public and confirm the URL serves the policy body), **C-3/M-3** (capture the Android screenshot set, re-render, open one output), **H-3** (do not ship the £4.99 `05_pro` shot to en-US). | 2026-08-05 |
-| 7 | publish | store-publisher | pending — user has asked for full submission for review | |
+| 7 | publish | store-publisher | **Play: UPLOADED (production track, draft) — Apple: BUILT AND STAGED, blocked on the ASC app record.** All three stage-6 leftovers closed: **C-1** — `mksoft-ltd/passportphoto` created public and pushed (244 files; no keystore, `key.properties`, `.p8`, `local.properties` or `docs/audits/` in the tree, and no committed file carries a home path), privacy URL returns **200 with a body byte-identical to `PRIVACY_POLICY.md`** (`diff` clean, not just a status check). **C-3** — Android raws captured on an API 36.1 emulator, `render.sh` re-run for all 15 frames, and **two outputs opened and eyeballed** (`01_result` shows the real Review screen at "7 / 7 passed"; `05_pro` shows the real paywall reading "Google Play account"). **H-3** — took option (b): **en-GB ships 5 shots, en-US ships 4** with `05_pro` omitted, so no GBP price reaches the US listing and no price was invented. Verified server-side after upload: en-GB 5, en-US 4. Also done: keystore + `key.properties` backed up to `~/.app-keystores/passportphoto/` (dir 700, files 600, md5 matched); fastlane scaffolded both platforms; **512×512 Play icon generated** (M-2) and store art synced into the paths `deliver`/`supply` actually read. **Play:** AAB 72.4 MB versionCode 1 signed `CN=Froggy Eye Ltd` (SHA-1 `53:FA:02:54:1F:AF:7C:86:60:53:33:D9:6D:81:91:9E:84:4E:E0:98`) uploaded to **production as a draft**, both listings + icon + feature graphic + changelogs live; **IAP `com.froggyeye.passportphoto.pro` created via API and ACTIVE** — 173 regions, GB exactly **£4.99**, `legacyCompatible: true`. **Apple:** IPA 40.6 MB built and verified (`Apple Distribution: Froggy Eye Ltd`, profile `Passport Photo Studio App Store`, `get-task-allow=false`, `ITSAppUsesNonExemptEncryption=false` and `UIDeviceFamily=[1]` read out of the **built** binary), metadata and screenshots staged. Upload is genuinely blocked, confirmed not assumed: `altool --validate-app` returns `Cannot determine the Apple ID from Bundle ID 'com.froggyeye.passportphoto'` because `GET /v1/apps` still returns 0 records. **Nothing was sent for review on either store** — Play's "Send changes for review" and the IARC/legal terms are the conductor's to drive. Post-2FA Apple runbook and the Play console checklist are in the stage-7 section below. | 2026-08-05 |
 
 ## ✅ Stage 1 finding — RESOLVED 2026-08-05 (was: crop cut the chin off)
 
@@ -833,3 +833,247 @@ see the removal stated, not silently vanished.
   URL change; it will tell you if the four places have drifted again.
 - **C-3 / M-3** — capture the Android raws, re-render, and open one output image.
 - **H-3** — do not ship the £4.99 `05_pro` shot to en-US.
+
+---
+
+## Stage 7 (publish, store-publisher) — 2026-08-05
+
+### Google Play — uploaded, NOT sent for review
+
+Everything the API can do is done. Read back from the API after upload rather
+than trusted from `supply`'s exit code:
+
+| Item | State |
+|---|---|
+| App record | exists — `com.froggyeye.passportphoto`, app id `4972341008668638772` |
+| AAB | versionCode **1**, 72.4 MB, on the **production** track as a **draft** release named `1.0.0` |
+| Signing | `CN=Froggy Eye Ltd, OU=Mobile, O=Froggy Eye Ltd, L=London, C=GB`, SHA-1 `53:FA:02:54:1F:AF:7C:86:60:53:33:D9:6D:81:91:9E:84:4E:E0:98`, SHA-256 `C2:5A:90:A8:F3:4B:65:72:48:B5:C9:F3:84:D9:3E:AA:C0:6E:98:A1:6E:BA:B7:71:18:9F:6F:CC:38:C0:B4:B0` |
+| Listings | en-GB + en-US — title 21, short description 70, full description 3656 / 3658 |
+| Screenshots | **en-GB 5, en-US 4** (H-3: `05_pro` carries £4.99 and is withheld from en-US) |
+| Icon / feature graphic | 512×512 + 1024×500, both locales |
+| Changelogs | `1.txt` on both locales |
+| IAP | `com.froggyeye.passportphoto.pro` — **ACTIVE**, one-time, 173 regions, GB **£4.99**, `legacyCompatible: true`, regionsVersion `2025/03` |
+
+⚠️ **Ordering trap, hit and recorded:** the Play IAP API rejects product creation
+with `400 … Can't create product. To fix, request billing permission.` until an
+artifact declaring `com.android.vending.BILLING` has been uploaded. It is **not**
+a service-account permission problem — the account holds
+`CAN_MANAGE_PERMISSIONS_GLOBAL` (Admin) and neither the developer-level nor the
+app-level permission enum contains any billing entry at all. **Upload the AAB
+first, then create the IAP.** The identical call succeeded immediately after the
+upload.
+
+**Play console work still owed (the conductor drives this in the founder's
+browser — deliberately not touched here).** Answers are in
+`android/fastlane/data_safety_answers.md`; the short form:
+
+- Privacy policy URL: `https://raw.githubusercontent.com/mksoft-ltd/passportphoto/refs/heads/main/PRIVACY_POLICY.md`
+- App access: **No login required**
+- Ads: **No ads**
+- Content rating (IARC): "All other app types"; digital purchases **Yes**;
+  violence / sexual / gambling / simulated gambling / language / controlled
+  substances **all None or No**. *The IARC terms tick needs the founder's OK.*
+- Target audience: **18+ only**; Designed for Families **not** opted in
+- Data safety: **collected + shared, not for tracking** — Device or other IDs;
+  App activity → Other actions; App info and performance → Diagnostics.
+  (This app is **not** "No data collected" — bundled ML Kit reports to Google.)
+- **Photo and video permissions: do NOT file the declaration** — the app
+  requests no broad photo permission (stage 4d removed `READ_MEDIA_IMAGES`);
+  `image_picker` gets a per-item URI grant from the system photo picker
+- Government apps / Financial features / Health: **none**
+- **Advertising ID: No** — this is the hidden "quick checks" blocker `supply`
+  cannot set
+- Store settings: category **Photography**, contact `info@froggyeye.com`,
+  `https://froggyeye.com`
+- **Countries/regions: EMPTY by default — the release cannot go live until set**
+- Then Publishing overview → **Send N changes for review**, and accept the Play
+  App Signing enrolment prompt on first rollout
+
+Once the app is live, flip `release_status` in `android/fastlane/Fastfile` from
+`"draft"` to `"completed"` — the API refuses `completed` on an app that has
+never been rolled out.
+
+### Apple — built, verified and staged; blocked only on the app record
+
+`GET /v1/apps?filter[bundleId]=com.froggyeye.passportphoto` returns **0
+records**, so the ASC app record still does not exist (stage 0's 2FA block).
+The block was confirmed rather than assumed: `xcrun altool --validate-app`
+fails with `Cannot determine the Apple ID from Bundle ID
+'com.froggyeye.passportphoto' and platform 'IOS'`.
+
+Done and verified:
+
+- **IPA built**: `build/ios/ipa/passport_photo_app.ipa`, 40.6 MB, version
+  1.0.0 build 1. Read out of the **built** binary, not the source: signed
+  `Apple Distribution: Froggy Eye Ltd (696939LPWV)`, embedded profile
+  `Passport Photo Studio App Store`, `get-task-allow = false`,
+  `ITSAppUsesNonExemptEncryption = false`, `UIDeviceFamily = [1]`.
+- **Provisioning profile created via API** (`POST /v1/profiles`, id
+  `M7S8TRFJFY`, uuid `0fa869e2-bae7-4cbf-92b3-abc6ad166915`) and installed into
+  `~/Library/MobileDevice/Provisioning Profiles/`. `ios/ExportOptions.plist`
+  pins manual signing — **do not switch it back to automatic**: automatic
+  signing has no Apple ID to use and cloud signing is refused outright because
+  the ASC key's App Manager role cannot mint profiles.
+- Metadata and screenshots staged where `deliver` reads them:
+  `ios/fastlane/metadata/{en-GB,en-US}/` and
+  `ios/fastlane/screenshots/{en-GB,en-US}/`.
+  **Only the 6.9" set is staged (1320×2868)** — `deliver` maps 6.7" and 6.9"
+  onto the same display type, and staging both silently truncates the upload
+  while still printing success.
+
+#### Post-2FA runbook — run in this order
+
+**0. Create the record** (console, ~1 min). App Store Connect → My Apps → **+**
+→ New App: Platform **iOS**; Name **Passport Photo Studio** (if taken, use
+**Passport & ID Photo Studio**, then update both `name.txt` files *and* every
+occurrence in both `description.txt` files, and re-check the ≤4000 count);
+Primary Language **English (U.K.)**; Bundle ID **com.froggyeye.passportphoto**;
+SKU **passportphoto**; Full Access.
+
+**1. Check for a stray macOS version** before uploading anything —
+a founder-created record can arrive carrying a `MAC_OS` appStoreVersion that
+silently absorbs the first metadata upload, after which the build attach fails
+with "different platform than the version":
+`GET /v1/apps/<appId>/appStoreVersions` → confirm `platform: IOS`. If wrong:
+`POST /v1/appStoreVersions` (platform `IOS`, releaseType `AFTER_APPROVAL`),
+re-run metadata, attach, then `DELETE` the macOS version.
+
+**2. Upload the build.** The IPA is already built, so no rebuild is needed:
+
+```
+cd /Users/kevinlam/projects/passport_photo_app
+xcrun altool --upload-app --type ios \
+  -f build/ios/ipa/passport_photo_app.ipa \
+  --apiKey "$ASC_KEY_ID" --apiIssuer "$ASC_ISSUER_ID"
+```
+
+altool reads the key from `~/.private_keys/AuthKey_Q2GWD76GUV.p8` (already
+copied there). A duplicate build number returns
+`ENTITY_ERROR.ATTRIBUTE.INVALID.DUPLICATE` with `previousBundleVersion` — if so,
+`flutter build ipa --release --export-options-plist=ios/ExportOptions.plist`
+after bumping the build number. Poll with
+`GET /v1/builds?filter[app]=<appId>` (`/v1/apps/<id>/builds` lags and can return
+empty).
+
+**3. Metadata + screenshots.**
+
+```
+cd ios && fastlane ios metadata_only
+```
+
+**4. Price — free.** `deliver`'s `price_tier` uses a legacy PATCH the current
+API rejects ("included resource is not linked"). Instead read the 0.0
+`customerPrice` point from
+`GET /v1/apps/<appId>/appPricePoints?filter[territory]=USA` and
+`POST /v1/appPriceSchedules` with `baseTerritory` USA and that point, using the
+literal `"${price-free}"` local-id form in `included`. 201 = done.
+
+**5. Age rating — 4+.** The declaration hangs off the **appInfo**, not the
+version, and the relationship comes back empty unless asked for:
+`GET /v1/apps/<appId>/appInfos` → `GET /v1/appInfos/<id>?include=ageRatingDeclaration`
+→ `PATCH /v1/ageRatingDeclarations/<id>`. The attribute set **mixes types** and a
+409 names each one you got wrong: content categories are enums (`"NONE"`),
+while `gambling` / `unrestrictedWebAccess` / `parentalControls` / `ageAssurance`
+/ `socialMedia` / `messagingAndChat` / `advertising` / `userGeneratedContent` /
+`lootBox` are booleans (`false`). `medicalOrTreatmentInformation` reads like a
+yes/no but is an **enum**. `kidsAgeBand: null`, `ageRatingOverrideV2: "NONE"` —
+4+ is the correct, computed answer here. Read it back and assert nothing is
+still null except `kidsAgeBand` / `developerAgeRatingInfoUrl`.
+
+**6. Create the IAP** — `com.froggyeye.passportphoto.pro`, **NON_CONSUMABLE**.
+Product ID must match `AppInfo.proProductId` exactly; read it from
+`lib/core/constants/app_info.dart:23`, never retype it.
+
+- `POST /v2/inAppPurchases` — `name: "Passport Photo Studio Pro"` (25/30).
+- `POST /v1/inAppPurchaseLocalizations` — relationship key is **`inAppPurchaseV2`**,
+  not `inAppPurchase`. Apple caps the description at **55 characters**, so the
+  Play copy will not fit; use
+  **`Full-resolution export, print sheet, no watermark.`** (50/55).
+- Price: `GET /v2/inAppPurchases/<id>/pricePoints?filter[territory]=GBR&limit=200`,
+  find `customerPrice` **4.99**, then `POST /v1/inAppPurchasePriceSchedules`
+  with `baseTerritory` GBR — Apple equalises the rest.
+- Availability is a **separate** resource: `POST /v1/inAppPurchaseAvailabilities`
+  with `availableInNewTerritories: true` and the full territory list from
+  `GET /v1/territories?limit=200`.
+- **Review screenshot** (this is what gates it): reserve
+  `POST /v1/inAppPurchaseAppStoreReviewScreenshots` with fileName + fileSize,
+  PUT the bytes to the returned `uploadOperations` URL with its headers, then
+  PATCH `{uploaded: true, sourceFileChecksum: <md5>}`. Use the **unframed**
+  capture `store_assets/screenshots/raw/ios/05_pro.png` (1179×2556 — the real
+  paywall, no marketing chrome), not the framed `out/ios69` render.
+- Re-read the IAP: it sits in `MISSING_METADATA` until the screenshot lands,
+  then flips to `READY_TO_SUBMIT`. Do not trust the state in the create response.
+
+**7. Privacy nutrition label — founder console click, and it is a hard gate.**
+There is no API (`appDataUsages` 404s) and
+`upload_app_privacy_details_to_app_store` has no `api_key` option. ASC → App
+Privacy → enter the answers → **Publish** (the separate Publish button is the
+one that counts). Submission fails with `APP_DATA_USAGES_REQUIRED` until it is
+published. Answers are in `ios/fastlane/app_privacy_details.json`: **Data Not
+Linked to You** → Device ID, Product Interaction, Performance Data, Other
+Diagnostic Data; purposes Analytics and App Functionality; **"Used for tracking"
+= No on every row**; photos explicitly not collected.
+
+**8. ⚠️ Attach the IAP to the version BEFORE submitting — console only.**
+This is the step that is easy to lose and expensive to undo. `POST
+/v1/inAppPurchaseSubmissions` for the IAP alone returns 409
+`FIRST_NON_CONSUMABLE_MUST_BE_SUBMITTED_ON_VERSION`, and
+`reviewSubmissionItems` **cannot carry an IAP** (it accepts only
+`appStoreVersion`, `appEvent`, `appCustomProductPageVersion`,
+`appStoreVersionExperiment`). So the first non-consumable has to be added to the
+1.0.0 version on the IAP's own page in ASC. If the version reaches
+`WAITING_FOR_REVIEW` without it, the only fix is to pull it out of review,
+attach, and resubmit — losing the queue position, with a reviewer meeting a
+paywall whose product is not under review (a plausible 2.1 rejection).
+**Warn the founder: publishing the privacy label in the console can submit the
+version as a side effect.**
+
+**9. Attach the build and submit.**
+`PATCH /v1/appStoreVersions/<vid>/relationships/build`, then
+`POST /v1/reviewSubmissions` (or reuse the open one — `deliver` may have created
+it), `POST /v1/reviewSubmissionItems` linking the version, then
+`PATCH /v1/reviewSubmissions/<sid>` `{submitted: true}`.
+State `WAITING_FOR_REVIEW` = success. Or, once the record exists and steps 4–8
+are done, `cd ios && fastlane ios upload_only` does the upload + submit in one.
+
+### Re-release one-liners
+
+```
+cd android && fastlane android release        # build AAB + upload to production (draft)
+cd android && fastlane android metadata_only  # listing text + images only
+cd ios     && fastlane ios release            # build IPA + upload + submit for review
+cd ios     && fastlane ios metadata_only      # metadata + screenshots, no build
+cd ios     && fastlane ios beta               # TestFlight only
+```
+
+Both `deliver` and `supply` overwrite server state, so **re-running a stage is
+safe and is the normal fix** — there is no separate recovery path.
+
+### Screenshot re-capture
+
+```
+# iOS (simulator must be booted)
+SCREENSHOT_DIR=store_assets/screenshots/raw/ios flutter drive \
+  --driver=test_driver/integration_test.dart \
+  --target=integration_test/screenshots_test.dart \
+  --dart-define=SCREENSHOT_MODE=true -d <simulator id>
+
+# Android (emulator must be booted; Medium_Phone_API_36.1 works)
+SCREENSHOT_DIR=store_assets/screenshots/raw/android flutter drive \
+  --driver=test_driver/integration_test.dart \
+  --target=integration_test/screenshots_test.dart \
+  --dart-define=SCREENSHOT_MODE=true -d emulator-5554
+
+store_assets/screenshots/render.sh            # then re-sync into the fastlane paths
+```
+
+**Always open at least one rendered PNG afterwards.** `render.sh` falls back to
+a branded "CAPTURE MISSING" placeholder at the correct dimensions and file size
+when a raw is absent, which passes every check short of looking at it — that is
+exactly how stage 6's C-3 shipped five placeholder frames unnoticed.
+
+### Keystore backup
+
+`android/upload-keystore.jks` and `android/key.properties` are backed up to
+`~/.app-keystores/passportphoto/` (directory `700`, files `600`, md5 verified
+against the originals). Both remain git-ignored; neither is in the public repo.

@@ -1,0 +1,72 @@
+default_platform(:android)
+
+# Resolved against this file rather than the working directory: supply's `aab:`
+# is interpreted relative to cwd, so a relative path works from android/ and
+# breaks from anywhere else.
+AAB_PATH = File.expand_path("../../build/app/outputs/bundle/release/app-release.aab", __dir__)
+
+def build_aab
+  Dir.chdir("../..") { sh("flutter", "build", "appbundle", "--release") }
+end
+
+platform :android do
+  desc "Build and upload to the internal track"
+  lane :internal do
+    build_aab
+    supply(
+      aab: AAB_PATH,
+      track: "internal",
+      release_status: "draft",
+      skip_upload_apk: true
+    )
+  end
+
+  desc "Build and upload to production (draft on a new app — roll out in console after the declarations)"
+  lane :release do
+    build_aab
+    supply(
+      aab: AAB_PATH,
+      track: "production",
+      # A new Play app is itself in draft: the API only accepts draft releases
+      # until the first console rollout ("Only releases with status draft may be
+      # created on draft app"). Flip to "completed" after the app is live.
+      # Uploads AAB + listing text + icon + feature graphic + screenshots; the
+      # "Send changes for review" click happens in the console once App content
+      # is complete.
+      release_status: "draft",
+      skip_upload_apk: true
+    )
+  end
+
+  desc "Upload an already-built AAB without rebuilding"
+  lane :upload_only do
+    supply(
+      aab: AAB_PATH,
+      track: "production",
+      release_status: "draft",
+      skip_upload_apk: true
+    )
+  end
+
+  desc "Upload listing text and images only (no binary)"
+  lane :metadata_only do
+    supply(
+      skip_upload_aab: true,
+      skip_upload_apk: true,
+      skip_upload_changelogs: false
+    )
+  end
+
+  desc "Promote the internal track build to production"
+  lane :promote do
+    supply(
+      track: "internal",
+      track_promote_to: "production",
+      skip_upload_aab: true,
+      skip_upload_apk: true,
+      skip_upload_metadata: true,
+      skip_upload_images: true,
+      skip_upload_screenshots: true
+    )
+  end
+end

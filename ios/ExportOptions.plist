@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!--
+  Manual signing on purpose. `flutter build ipa` with automatic signing dies at
+  the export step with "No Accounts / No profiles for
+  'com.froggyeye.passportphoto' were found" unless an Apple ID is signed in to
+  Xcode, and xcodebuild's cloud signing (-allowProvisioningUpdates with the ASC
+  key) is refused outright: the App Store Connect key's App Manager role cannot
+  mint certificates or profiles.
+
+  The profile named below is created via POST /v1/profiles with the same API key
+  and installed into ~/Library/MobileDevice/Provisioning Profiles/. Recreate it
+  there if it expires; do not switch this file back to automatic.
+-->
+<plist version="1.0">
+<dict>
+  <key>method</key>
+  <string>app-store-connect</string>
+  <key>teamID</key>
+  <string>696939LPWV</string>
+  <key>signingStyle</key>
+  <string>manual</string>
+  <key>signingCertificate</key>
+  <string>Apple Distribution</string>
+  <key>provisioningProfiles</key>
+  <dict>
+    <key>com.froggyeye.passportphoto</key>
+    <string>Passport Photo Studio App Store</string>
+  </dict>
+  <key>uploadSymbols</key>
+  <true/>
+  <key>destination</key>
+  <string>export</string>
+</dict>
+</plist>

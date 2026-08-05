@@ -91,3 +91,8 @@ app.*.map.json
 *.p12
 /store_assets/screenshots/raw/
 /store_assets/screenshots/out/
+
+# fastlane run artefacts (regenerated on every lane run)
+**/fastlane/report.xml
+**/fastlane/Preview.html
+**/fastlane/test_output/

@@ -1,0 +1,123 @@
+default_platform(:ios)
+
+APP_IDENTIFIER = "com.froggyeye.passportphoto"
+
+# `flutter build ipa` names the archive after the Xcode product name, not after
+# the pubspec name, so resolve it rather than hard-coding a guess that breaks
+# silently the day the product name changes.
+def ipa_path
+  matches = Dir.glob(File.expand_path("../../build/ios/ipa/*.ipa", __dir__))
+  UI.user_error!("No .ipa in build/ios/ipa — run the build first") if matches.empty?
+  UI.user_error!("More than one .ipa in build/ios/ipa: #{matches.join(', ')}") if matches.size > 1
+  matches.first
+end
+
+def asc_key
+  app_store_connect_api_key(
+    key_id: ENV.fetch("ASC_KEY_ID"),
+    issuer_id: ENV.fetch("ASC_ISSUER_ID"),
+    key_filepath: ENV.fetch("ASC_KEY_PATH")
+  )
+end
+
+def build_ipa
+  Dir.chdir("../..") { sh("flutter", "build", "ipa", "--release") }
+end
+
+platform :ios do
+  # App-record creation lives on Apple's `iris` host, which rejects App Store
+  # Connect API keys — POST /v1/apps returns 403 "does not allow 'CREATE'". So
+  # this lane needs an interactive Apple ID login and 2FA, and creating the
+  # record by hand in App Store Connect is usually faster. Field values are in
+  # PIPELINE.md under "Apple post-2FA runbook".
+  desc "Create the App Store Connect record (interactive Apple ID login required)"
+  lane :setup do
+    # produce has no api_key option; it reads the key from the lane context.
+    asc_key
+    produce(
+      # produce validates `username` even when the API key does the talking.
+      username: ENV.fetch("FASTLANE_USER"),
+      app_identifier: APP_IDENTIFIER,
+      app_name: "Passport Photo Studio",
+      language: "English (U.K.)",
+      app_version: "1.0.0",
+      sku: "passportphoto",
+      platforms: ["ios"],
+      # The bundle ID is already registered in the Developer Portal
+      # (ASC id FQDJK2W53W); the portal leg of produce needs an Apple ID login
+      # the API key cannot supply.
+      skip_devcenter: true
+    )
+  end
+
+  desc "Build, upload metadata + screenshots + build, and submit for review"
+  lane :release do
+    key = asc_key
+    build_ipa
+    deliver(
+      api_key: key,
+      ipa: ipa_path,
+      # No price_tier: deliver's legacy price PATCH is rejected by the current
+      # ASC API. Free/paid price is set once via appPriceSchedules — this app
+      # is free with a one-time IAP, so the price schedule is the free point.
+      #
+      # No upload_app_privacy_details_to_app_store either: that action cannot
+      # use the API key (interactive Apple ID only) and the public API 404s on
+      # appDataUsages. The nutrition label is a one-time console click; the
+      # answers are in fastlane/app_privacy_details.json.
+      submit_for_review: true,
+      automatic_release: true,
+      force: true,
+      # The IAP is created and submitted through App Store Connect separately;
+      # precheck's IAP pass needs an interactive session.
+      precheck_include_in_app_purchases: false,
+      run_precheck_before_submit: true,
+      submission_information: {
+        add_id_info_uses_idfa: false,
+        export_compliance_uses_encryption: false,
+        content_rights_contains_third_party_content: false
+      }
+    )
+  end
+
+  desc "Upload metadata and screenshots only (no build, no submission)"
+  lane :metadata_only do
+    deliver(
+      api_key: asc_key,
+      skip_binary_upload: true,
+      skip_app_version_update: false,
+      force: true,
+      run_precheck_before_submit: false,
+      submit_for_review: false
+    )
+  end
+
+  desc "Upload an already-built .ipa without rebuilding, and submit for review"
+  lane :upload_only do
+    deliver(
+      api_key: asc_key,
+      ipa: ipa_path,
+      submit_for_review: true,
+      automatic_release: true,
+      force: true,
+      precheck_include_in_app_purchases: false,
+      run_precheck_before_submit: true,
+      submission_information: {
+        add_id_info_uses_idfa: false,
+        export_compliance_uses_encryption: false,
+        content_rights_contains_third_party_content: false
+      }
+    )
+  end
+
+  desc "Build and upload to TestFlight only"
+  lane :beta do
+    key = asc_key
+    build_ipa
+    pilot(
+      api_key: key,
+      ipa: ipa_path,
+      skip_waiting_for_build_processing: true
+    )
+  end
+end
