@@ -1,6 +1,6 @@
 # Privacy Policy — Passport Photo Studio
 
-**Last updated: 5 August 2026**
+**Last updated: 28 August 2026**
 
 Passport Photo Studio is published by **Froggy Eye Ltd** (United Kingdom).
 
@@ -32,6 +32,39 @@ copy the camera or the photo picker hands the app — is deleted as soon as the
 app has finished with it, and anything left behind by a crash is cleared the
 next time the app starts. The only copies that persist are the ones you
 explicitly save to your own photo gallery.
+
+## Face data
+
+Because the app detects a face in your photo, this section states exactly what
+happens to face data, in the terms privacy laws and the app stores use.
+
+**What face data is processed.** To centre and size the crop, the app runs
+Google ML Kit's on-device face detection over your photo. That produces a face
+bounding box and the positions of facial landmarks (such as the eyes) as
+coordinates in the image. The app reduces those coordinates to simple geometric
+measurements — face height, eye-line position — and uses them for two things
+only: cropping the photo to the document specification you chose, and running
+the compliance checks shown on the result screen.
+
+**No face data is collected, stored, or shared.** The detection runs entirely
+on your device against a model bundled inside the app. The bounding box,
+landmark coordinates and derived measurements exist only in the app's working
+memory while your photo is being processed and displayed; they are discarded
+when processing finishes and are never written to disk, never included in any
+saved file, never transmitted off your device, and never shared with us or with
+any third party. ML Kit's diagnostic reports to Google (described below)
+contain no face data and no part of your image.
+
+**No recognition, no identification, no profiling.** The app performs face
+*detection* — "where is a face in this picture" — not face *recognition*. It
+creates no faceprint or biometric template, cannot identify anyone, does not
+compare faces across photos, and builds no database of faces.
+
+**Retention: none.** Face data is retained only for the seconds your photo is
+being processed and viewed, in memory, on your device. There is nothing for us
+to retain — we never receive it. The only face-related thing that can persist
+is the finished photograph itself, and only if you choose to save it to your
+own photo library.
 
 ## What uses the network
 
