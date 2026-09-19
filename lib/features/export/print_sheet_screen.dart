@@ -14,8 +14,18 @@ import 'export_service.dart';
 /// Free users see the real layout, watermarked — hiding it entirely would make
 /// the upsell abstract, and the whole point of this app is that you can tell
 /// whether it worked before you pay.
-final _sheetPreviewProvider = FutureProvider.family
+@visibleForTesting
+final sheetPreviewProvider = FutureProvider.family
     .autoDispose<Uint8List, String>((ref, sourcePath) async {
+  // Watched, not read. `exportServiceProvider` deliberately does not depend on
+  // the entitlement — it looks the flag up at the moment of export — so
+  // nothing else here changes when a purchase completes. Without this line a
+  // user who bought Pro from this very screen (the locked save button pushes
+  // `/pro`) came back to a sheet still stamped PREVIEW, under a button that
+  // now read "Save print sheet to gallery". The saved file was correct; only
+  // the picture of it was stale, which is the one thing this screen exists to
+  // show honestly.
+  ref.watch(isProUnlockedProvider);
   final photo = await ref.watch(processedPhotoProvider(sourcePath).future);
   return ref.watch(exportServiceProvider).buildSheetPreview(photo);
 });
@@ -27,7 +37,7 @@ class PrintSheetScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final preview = ref.watch(_sheetPreviewProvider(sourcePath));
+    final preview = ref.watch(sheetPreviewProvider(sourcePath));
     final photo = ref.watch(processedPhotoProvider(sourcePath));
 
     return Scaffold(

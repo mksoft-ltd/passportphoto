@@ -64,6 +64,17 @@ post_install do |installer|
         '$(inherited)',
         'PERMISSION_CAMERA=1',
       ]
+
+      # Current Xcode refuses to build any target below iOS 15.0, and several
+      # of these pods still ship a podspec declaring 9.0, 10.0, 12.0 or 13.0.
+      # `flutter_additional_ios_build_settings` above raises them only as far
+      # as Flutter's own floor, which is lower than 15.0, so the generated
+      # Pods project kept those values and every device build failed with
+      # "the range of supported deployment target versions is 15.0 to 27.0.x",
+      # once per offending pod configuration. Pin them to the same 15.5 that
+      # `Runner` and `platform :ios` at the top of this file already use, so
+      # there is one deployment target across the project.
+      config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '15.5'
     end
   end
 end

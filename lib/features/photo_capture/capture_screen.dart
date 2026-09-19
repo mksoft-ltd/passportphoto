@@ -1,4 +1,7 @@
+import 'dart:io' show Platform;
+
 import 'package:camera/camera.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -28,6 +31,15 @@ class _CaptureError {
   final String message;
   final _Recovery recovery;
 }
+
+/// The OS doing the refusing, for the permanently-denied copy.
+///
+/// The app is live on Google Play as well as the App Store, and this message
+/// named iOS unconditionally until 2026-09-19, so every Android user who
+/// tapped "Don't allow" twice was told about an operating system they were not
+/// using. Same reasoning as `PurchaseService._storeName`, which already takes
+/// this care over naming the right store.
+String get _osName => !kIsWeb && Platform.isIOS ? 'iOS' : 'Android';
 
 class CaptureScreen extends ConsumerStatefulWidget {
   const CaptureScreen({super.key});
@@ -101,10 +113,11 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen>
       if (!status.isGranted) {
         _fail(
           status.isPermanentlyDenied || status.isRestricted
-              ? const _CaptureError(
+              ? _CaptureError(
                   'Passport Photo Studio does not have permission to use the '
-                  'camera, and iOS will not ask again from inside the app. You '
-                  'can turn it on in Settings, or use a photo you already have.',
+                  'camera, and $_osName will not ask again from inside the '
+                  'app. You can turn it on in Settings, or use a photo you '
+                  'already have.',
                   recovery: _Recovery.openSettings,
                 )
               : const _CaptureError(
@@ -211,6 +224,12 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen>
   }
 
   void _flipCamera() {
+    // `_initialise` refuses to start while another run is in flight, so
+    // toggling first would leave `_useFront` describing a camera that was
+    // never opened: the next tap would then "flip" back to the lens already on
+    // screen and the button would look broken. Nothing to flip to yet is the
+    // honest reading of a tap during start-up.
+    if (_initialising) return;
     _useFront = !_useFront;
     // `_initialise` disposes the outgoing controller itself.
     _initFuture = _initialise();

@@ -265,27 +265,48 @@ _CropResult _computeCropRect({
   final cropHeight = headHeight / framing.faceHeightFraction;
   final cropWidth = cropHeight * spec.aspectRatio;
 
-  final cropTop = eyeY - framing.eyeLineFromTopFraction * cropHeight;
+  // The rectangle that gets cut has to keep the spec's aspect ratio, because
+  // the resize afterwards forces the output to `spec.widthPx × spec.heightPx`
+  // whatever shape arrives. Truncating an over-large crop one axis at a time
+  // — which is what this did until 2026-09-19 — changes that shape, and the
+  // resize then stretches the face to fill it: a 200 × 200 px square painted
+  // on the source came back 138 × 133, and a landscape source with the head
+  // filling it squeezed by 36% (both measured; the goldens in
+  // `test/crop_aspect_test.dart` are those cases). A geometrically distorted
+  // face is refused at the counter, and nothing in the report named it,
+  // because every check measures positions within the cut rectangle and a
+  // uniform stretch leaves all of them where they were.
+  //
+  // So when the requested crop does not fit, it is scaled down *uniformly* to
+  // the largest rectangle of the same shape that does. The head then fills
+  // more of the frame than the spec allows, which is a true statement about
+  // the photograph and which the face-size check reports on its own.
+  final fitScale = math.min(
+    1.0,
+    math.min(sourceWidth / cropWidth, sourceHeight / cropHeight),
+  );
+  final fittedWidth = cropWidth * fitScale;
+  final fittedHeight = cropHeight * fitScale;
 
-  // Center horizontally on the face midpoint.
-  final cropLeft = face.boxCentreX - cropWidth / 2.0;
+  // Placed against the rectangle that will actually be cut, so the eye line
+  // lands at the intended fraction of it even when the shrink above fired.
+  final cropTop = eyeY - framing.eyeLineFromTopFraction * fittedHeight;
+
+  // Centre horizontally on the face midpoint.
+  final cropLeft = face.boxCentreX - fittedWidth / 2.0;
 
   // Clamp so we never read pixels outside the source image.
-  final left =
-      cropLeft.clamp(0.0, (sourceWidth - cropWidth).clamp(0.0, double.infinity));
-  final top = cropTop.clamp(
-      0.0, (sourceHeight - cropHeight).clamp(0.0, double.infinity));
+  final left = cropLeft.clamp(0.0, sourceWidth - fittedWidth);
+  final top = cropTop.clamp(0.0, sourceHeight - fittedHeight);
 
-  int rectLeft = left.round();
-  int rectTop = top.round();
-  int rectWidth = cropWidth.round();
-  int rectHeight = cropHeight.round();
+  int rectWidth = math.max(1, math.min(fittedWidth.round(), sourceWidth));
+  int rectHeight = math.max(1, math.min(fittedHeight.round(), sourceHeight));
 
-  // Final clamp in pixel space — ensure the rect fits.
-  if (rectLeft + rectWidth > sourceWidth) rectWidth = sourceWidth - rectLeft;
-  if (rectTop + rectHeight > sourceHeight) rectHeight = sourceHeight - rectTop;
-  rectWidth = math.max(1, rectWidth);
-  rectHeight = math.max(1, rectHeight);
+  // Rounding to whole pixels can push an edge past the source. Move the
+  // origin rather than trimming a side: trimming is the aspect-ratio bug
+  // above in miniature, and the rect is known to fit at this size.
+  int rectLeft = left.round().clamp(0, sourceWidth - rectWidth);
+  int rectTop = top.round().clamp(0, sourceHeight - rectHeight);
 
   final rect = _IntRect(
     left: rectLeft,
@@ -308,7 +329,11 @@ _CropResult _computeCropRect({
     crownFraction: (crownY - cutTop) / cutHeight,
     chinFraction: (chinY - cutTop) / cutHeight,
     eyeLineFromBottomFraction: (cutTop + cutHeight - eyeY) / cutHeight,
-    croppedToBoundary: cropLeft != left || cropTop != top,
+    // `fitScale` below 1 means the requested crop was larger than the source
+    // in at least one axis, which is the same failure to capture the picture
+    // as running off an edge — the subject is too close — and has to be
+    // reported even when the shrunken rectangle then sits inside the source.
+    croppedToBoundary: fitScale < 1.0 || cropLeft != left || cropTop != top,
     honoursSpecEyeLine: framing.honoursSpecEyeLine,
   );
 }
