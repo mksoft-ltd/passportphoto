@@ -1,0 +1,5 @@
+Fixes a crop defect that could stretch your photo.
+
+If your head filled most of the source picture, the crop was squeezed to fit and the face came out distorted, with no check reporting it. The crop now keeps the proportions the document spec asks for, and a shot too close to fit is flagged to retake.
+
+Also fixed: the print sheet stayed watermarked after buying Pro, the camera permission message named the wrong OS, and switch-camera could be tapped during start-up without flipping.

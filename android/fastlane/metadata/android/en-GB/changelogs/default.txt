@@ -1,3 +1,5 @@
-First release.
+Fixes a crop defect that could stretch your photo.
 
-30 document specs across 21 countries, plus ICAO Doc 9303 and Schengen generic fallbacks, all free. Take a photo with the on-screen face guide or import one, get an automatic crop to the exact size the spec asks for, and read a seven-point compliance report with a reason for every check. Pro unlocks the full-resolution unwatermarked export and the 4x6 inch print sheet for one payment.
+If your head filled most of the source picture, the crop was squeezed to fit and the face came out distorted, with no check reporting it. The crop now keeps the proportions the document spec asks for, and a shot too close to fit is flagged to retake.
+
+Also fixed: the print sheet stayed watermarked after buying Pro, the camera permission message named the wrong OS, and switch-camera could be tapped during start-up without flipping.
