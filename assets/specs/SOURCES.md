@@ -176,3 +176,79 @@ this version removes is the kind of error that propagates through them.
 figures above were retrieved through domain-restricted search, which surfaces
 the official text but is a weaker citation than a direct read. Both are worth
 re-checking by hand in a browser before a release that changes them.
+
+---
+
+# Background, glasses and head coverings
+
+Added 2026-09-19, data version 3. Until then this file covered only the
+geometry, and `photo_specs.json`'s `background` values and the `notes` strings
+that assert things like "No glasses" carried **no provenance at all** — which
+broke this file's own opening rule.
+
+## Why the backgrounds are not all white
+
+The common assumption is that a passport photo needs a white background. It
+does not, and for several of these countries white is the wrong answer:
+
+| Authority | Published wording | Source |
+|---|---|---|
+| UK (HMPO) | "be taken against a plain light-coloured background" | <https://www.gov.uk/photos-for-passports> |
+| US (State Dept) | white or off-white | <https://travel.state.gov/en/passports/apply/help/photos.html> |
+| Canada (IRCC) | "a plain white or light-coloured background" | <https://www.canada.ca/en/immigration-refugees-citizenship/services/canadian-passports/photos.html> |
+| Germany (Auswärtiges Amt) | "The background should be neutral and light, providing sufficient contrast to the face and hair (a neutral grey)." | <https://dublin.diplo.de/ie-en/passport-photos-2380534> |
+| China (visa) | "Background should be in white, and with no edge frame." | <https://losangeles.china-consulate.gov.cn/eng/visa/chinavisa/201611/t20161122_5421687.htm> |
+
+So `uk_passport`'s off-white and the German/Dutch/French light grey are
+correct, not a bug. Germany in particular commonly rejects pure white.
+
+## Glasses and head coverings
+
+`glasses` and `headCovering` in `photo_specs.json`. **Neither is checked
+automatically and neither can be**: `google_mlkit_face_detection`'s `Face`
+carries head Euler angles, eye-open and smiling probabilities, landmarks and
+contours, and nothing about eyewear or headwear. They are published to the
+user as rules to follow, in `_AccessoryRulesCard` on the result screen, kept
+visually apart from the seven measured checks.
+
+**Fetched from the authority's own page:**
+
+| Spec | Glasses | Source |
+|---|---|---|
+| `uk_passport`, `uk_visa` | Only if you have to; no tinted; eyes not covered, no glare | <https://www.gov.uk/photos-for-passports> |
+| `ca_passport`, `ca_id` | Accepted; eyes clearly visible, no glare; no sunglasses or tint | <https://www.canada.ca/en/immigration-refugees-citizenship/services/canadian-passports/photos.html> |
+| `de_passport`, `de_id` | Allowed; no reflection, frames must not hide the eyes | <https://dublin.diplo.de/ie-en/passport-photos-2380534> |
+| `cn_visa` | "Eyeglasses are allowed except thick-rimmed, tinted or glare glasses." | <https://losangeles.china-consulate.gov.cn/eng/visa/chinavisa/201611/t20161122_5421687.htm> |
+
+**Search-sourced, citing the authority but not fetched from it** (the sites
+either 403 the request or publish the rules inside an image). Treated the same
+as the above in the data — they are unambiguous and long-standing — but noted
+here so the distinction is not lost:
+
+| Spec | Glasses | Authority |
+|---|---|---|
+| `us_passport`, `us_visa` | Must be removed; none accepted since 1 Nov 2016 bar a signed medical statement | travel.state.gov |
+| `au_passport` | Should not be worn; rare medical exemption with certificate | passports.gov.au |
+| `nz_passport` | Prescription allowed if not tinted or thick-framed | passports.govt.nz |
+| `in_passport`, `in_visa` | To be removed; no tinted or dark glasses | passportindia.gov.in |
+| `sg_passport` | Prefers none; clear untinted thin frames accepted | ica.gov.sg |
+
+**Not confirmed** — every other spec carries `"glasses": "unverified"` and
+`"headCovering": "unverified"`, and the app says so on screen rather than
+guessing. That covers `icao_generic`, `schengen_generic`, `fr_passport`,
+`es_passport`, `it_passport`, `nl_passport`, `se_passport`, `ch_passport`,
+`ie_passport`, `jp_passport`, `cn_passport`, `ae_passport`, `br_passport`,
+`mx_passport`, `za_passport` and `us_drivers_license`. Filling these in is
+worth doing; inventing them is not.
+
+Note `cn_passport` is deliberately left unverified even though `cn_visa` is
+sourced: the consulate page above is the **visa** rule, and the passport, which
+China issues to its own nationals, is a different instrument. The secondary
+sources that claim glasses are banned for it do not agree with each other.
+
+## Neutral expression
+
+Not a background or accessory rule, but recorded here because it came out of
+the same review. Almost every spec's `notes` asks for a neutral expression or
+"no smiling", ML Kit returns `smilingProbability` on every detection, and
+nothing read it until 2026-09-19. It is now the report's eighth check.

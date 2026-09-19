@@ -79,6 +79,7 @@ FaceMeasurement _faceFilling({
     pitch: 0,
     leftEyeOpenProbability: 1,
     rightEyeOpenProbability: 1,
+    smilingProbability: 0,
   );
 }
 

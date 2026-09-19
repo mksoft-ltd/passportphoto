@@ -1,5 +1,5 @@
-Fixes a crop defect that could stretch your photo.
+Checks the background colour, not just its evenness.
 
-If your head filled most of the source picture, the crop was squeezed to fit and the face came out distorted, with no check reporting it. The crop now keeps the proportions the document spec asks for, and a shot too close to fit is flagged to retake.
+The background check only measured whether the wall was even, and it sampled a strip that included the top of your head — so a white wall behind dark hair failed while an evenly-lit black wall passed. It now samples the wall itself and tests that it is plain, light and free of a colour cast.
 
-Also fixed: the print sheet stayed watermarked after buying Pro, the camera permission message named the wrong OS, and switch-camera could be tapped during start-up without flipping.
+New: a neutral-expression check, and each document lists its glasses and head-covering rules, quoted from the issuing authority.

@@ -1,13 +1,14 @@
 Take your passport, visa or ID photo at home, and find out whether it meets the spec before you print it.
 
-Passport Photo Studio measures your photo against the published requirements for the document you actually need, then shows its working: seven checks, each with a pass or fail and a plain-English reason.
+Passport & ID Photo Studio measures your photo against the published requirements for the document you actually need, then shows its working: eight checks, each with a pass or fail and a plain-English reason, plus the rules only you can confirm — glasses and head coverings — quoted from the issuing authority.
 
 - Single face detected
 - Eyes open
 - Looking forward
+- Neutral expression
 - Face size within spec
 - Eye line within spec
-- Background uniform
+- Background: plain, light and free of a colour cast
 - Photo fully captured
 
 If something is wrong, you find out now, with the reason, instead of at the counter.
@@ -27,7 +28,7 @@ EVERY SPEC IS FREE
 Countries included: United Kingdom, United States, Canada, Australia, New Zealand, Ireland, Germany, France, Spain, Italy, Netherlands, Sweden, Switzerland, Japan, China, India, Singapore, United Arab Emirates, Brazil, Mexico and South Africa.
 
 ONE PAYMENT. NO SUBSCRIPTION.
-Passport Photo Studio Pro is a single one-time purchase. It unlocks the full-resolution unwatermarked export and the 4x6 inch print sheet, for unlimited photos, for every country, for as long as you own the app. No subscription, no per-photo charge, no trial that expires.
+Passport & ID Photo Studio Pro is a single one-time purchase. It unlocks the full-resolution unwatermarked export and the 4x6 inch print sheet, for unlimited photos, for every country, for as long as you own the app. No subscription, no per-photo charge, no trial that expires.
 
 SIZED TO THE MILLIMETER
 Every spec carries the real numbers: photo size in millimeters, the face-height band, where the eye line has to sit, the required background and the output resolution. The crop is calculated from your own face measurements, then resampled to the exact pixel dimensions the document asks for: 2x2 inch for the United States and India, 35x45mm for the UK and most of Europe.

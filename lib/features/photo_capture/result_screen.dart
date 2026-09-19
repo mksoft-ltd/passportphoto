@@ -7,6 +7,7 @@ import 'package:go_router/go_router.dart';
 import '../../app/theme.dart';
 import '../../core/constants/app_info.dart';
 import '../../core/models/photo_spec.dart';
+import '../../core/utils/external_links.dart';
 import '../export/export_service.dart';
 import '../processing/photo_processor.dart';
 import '../processing/processed_photo.dart';
@@ -112,6 +113,8 @@ class _ResultViewState extends ConsumerState<_ResultView> {
               ),
             ),
           ],
+          const SizedBox(height: 16),
+          _AccessoryRulesCard(spec: spec),
           const SizedBox(height: 24),
           if (!unlocked) ...[
             _ProUpsell(onTap: () => context.push('/pro')),
@@ -421,6 +424,138 @@ class _ErrorView extends StatelessWidget {
           Text(message, textAlign: TextAlign.center),
           const SizedBox(height: 20),
           FilledButton(onPressed: onRetake, child: const Text('Try again')),
+        ],
+      ),
+    );
+  }
+}
+
+
+/// The rules this document sets that the app cannot measure.
+///
+/// Kept visually and verbally apart from the compliance checks above, because
+/// the difference matters: those are measurements of this photograph, and
+/// these are things only the person in it can confirm. ML Kit's `Face`
+/// exposes head angles, eye-open and smiling probabilities, landmarks and
+/// contours — nothing about eyewear or headwear — so a glasses "check" could
+/// only ever be a guess dressed as a result, on a screen whose entire value is
+/// that it shows its working.
+///
+/// Where the rules have not been read off the issuing authority's own page the
+/// card says so rather than filling the gap.
+class _AccessoryRulesCard extends StatelessWidget {
+  const _AccessoryRulesCard({required this.spec});
+
+  final PhotoSpec spec;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final scheme = theme.colorScheme;
+    final verified = spec.accessoryRulesVerified;
+
+    final rows = <(IconData, String)>[
+      (
+        Icons.visibility_outlined,
+        switch (spec.glasses) {
+          GlassesRule.notAllowed =>
+            'Glasses must be removed for this document.',
+          GlassesRule.allowedIfClear =>
+            'Glasses are allowed only with clear, untinted lenses, no glare, '
+                'and your eyes not covered by the frames.',
+          GlassesRule.unverified =>
+            'Glasses: this app has not confirmed the rule for this document.',
+        }
+      ),
+      (
+        Icons.face_outlined,
+        switch (spec.headCovering) {
+          HeadCoveringRule.religiousOrMedicalOnly =>
+            'Head coverings only for religious or medical reasons, with your '
+                'full face visible and no shadow on it.',
+          HeadCoveringRule.unverified =>
+            'Head coverings: this app has not confirmed the rule for this '
+                'document.',
+        }
+      ),
+    ];
+
+    return Container(
+      decoration: BoxDecoration(
+        color: scheme.surfaceContainer,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: scheme.outlineVariant),
+      ),
+      padding: const EdgeInsets.all(14),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text('You have to check these yourself',
+              style: theme.textTheme.titleSmall),
+          const SizedBox(height: 2),
+          Text(
+            'The camera cannot tell whether you are wearing glasses or a head '
+            'covering, so these are not part of the checks above.',
+            style: theme.textTheme.bodySmall,
+          ),
+          const SizedBox(height: 10),
+          for (final (icon, text) in rows)
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 4),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Icon(icon, size: 18, color: scheme.onSurfaceVariant),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Text(text, style: theme.textTheme.bodySmall),
+                  ),
+                ],
+              ),
+            ),
+          if (spec.accessoryNotes != null) ...[
+            const SizedBox(height: 8),
+            Text(
+              spec.accessoryNotes!,
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: scheme.onSurfaceVariant,
+                fontStyle: FontStyle.italic,
+              ),
+            ),
+          ],
+          const SizedBox(height: 10),
+          Text(
+            verified
+                ? 'Read from the issuing authority\'s own guidance. Rules '
+                    'change — confirm before you submit.'
+                : 'Not confirmed against the issuing authority for this '
+                    'document. Check their guidance before you submit.',
+            style: theme.textTheme.bodySmall?.copyWith(
+              color: verified ? scheme.onSurfaceVariant : scheme.error,
+            ),
+          ),
+          if (spec.rulesSource != null) ...[
+            const SizedBox(height: 4),
+            TextButton(
+              style: TextButton.styleFrom(
+                padding: EdgeInsets.zero,
+                minimumSize: const Size(0, 32),
+                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                alignment: Alignment.centerLeft,
+              ),
+              onPressed: () async {
+                final ok = await openExternalLink(spec.rulesSource!);
+                if (!ok && context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Could not open the official guidance.'),
+                    ),
+                  );
+                }
+              },
+              child: const Text('Read the official guidance'),
+            ),
+          ],
         ],
       ),
     );

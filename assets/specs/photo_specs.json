@@ -18,7 +18,9 @@
       "format": "JPEG",
       "fileSizeMinKb": null,
       "fileSizeMaxKb": null,
-      "notes": "Neutral expression, mouth closed, eyes open, no head covering unless religious."
+      "notes": "Neutral expression, mouth closed, eyes open, no head covering unless religious.",
+      "glasses": "unverified",
+      "headCovering": "unverified"
     },
     {
       "id": "us_passport",
@@ -36,7 +38,11 @@
       "format": "JPEG",
       "fileSizeMinKb": 54,
       "fileSizeMaxKb": 10240,
-      "notes": "2x2 inch. Plain white/off-white background. No glasses. Neutral expression."
+      "notes": "2x2 inch. Plain white/off-white background. No glasses. Neutral expression.",
+      "glasses": "notAllowed",
+      "headCovering": "religiousOrMedicalOnly",
+      "rulesSource": "https://travel.state.gov/en/passports/apply/help/photos.html",
+      "accessoryNotes": "Glasses must be removed. The State Department has not accepted photos with eyeglasses since 1 November 2016, except with a signed medical statement."
     },
     {
       "id": "us_visa",
@@ -52,7 +58,11 @@
       "eyeLineFromBottomMaxMm": 35.0,
       "background": "white",
       "format": "JPEG",
-      "notes": "Same as US passport. 600x600 to 1200x1200 px."
+      "notes": "Same as US passport. 600x600 to 1200x1200 px.",
+      "glasses": "notAllowed",
+      "headCovering": "religiousOrMedicalOnly",
+      "rulesSource": "https://travel.state.gov/en/passports/apply/help/photos.html",
+      "accessoryNotes": "Glasses must be removed, as for the US passport."
     },
     {
       "id": "uk_passport",
@@ -68,7 +78,11 @@
       "eyeLineFromBottomMaxMm": 31.5,
       "background": "off-white",
       "format": "JPEG",
-      "notes": "Plain cream/light grey background. No smiling, mouth closed."
+      "notes": "Plain cream/light grey background. No smiling, mouth closed.",
+      "glasses": "allowedIfClear",
+      "headCovering": "religiousOrMedicalOnly",
+      "rulesSource": "https://www.gov.uk/photos-for-passports",
+      "accessoryNotes": "Do not wear glasses unless you have to. No sunglasses or tinted lenses, and the frames must not cover your eyes — no glare, reflection or shadow."
     },
     {
       "id": "uk_visa",
@@ -84,7 +98,11 @@
       "eyeLineFromBottomMaxMm": 31.5,
       "background": "off-white",
       "format": "JPEG",
-      "notes": "Same as UK passport spec."
+      "notes": "Same as UK passport spec.",
+      "glasses": "allowedIfClear",
+      "headCovering": "religiousOrMedicalOnly",
+      "rulesSource": "https://www.gov.uk/photos-for-passports",
+      "accessoryNotes": "Do not wear glasses unless you have to. No tinted lenses, no glare, eyes not covered by frames."
     },
     {
       "id": "ca_passport",
@@ -100,7 +118,11 @@
       "eyeLineFromBottomMaxMm": 49.0,
       "background": "white",
       "format": "JPEG",
-      "notes": "Face from chin to crown 31-36mm. Plain white background."
+      "notes": "Face from chin to crown 31-36mm. Plain white background.",
+      "glasses": "allowedIfClear",
+      "headCovering": "religiousOrMedicalOnly",
+      "rulesSource": "https://www.canada.ca/en/immigration-refugees-citizenship/services/canadian-passports/photos.html",
+      "accessoryNotes": "Glasses are accepted if your eyes are clearly visible with no glare on the lenses. Sunglasses and tinted glasses are not accepted."
     },
     {
       "id": "ca_id",
@@ -116,7 +138,11 @@
       "eyeLineFromBottomMaxMm": 49.0,
       "background": "white",
       "format": "JPEG",
-      "notes": "Same as Canadian passport."
+      "notes": "Same as Canadian passport.",
+      "glasses": "allowedIfClear",
+      "headCovering": "religiousOrMedicalOnly",
+      "rulesSource": "https://www.canada.ca/en/immigration-refugees-citizenship/services/canadian-passports/photos.html",
+      "accessoryNotes": "Glasses are accepted if your eyes are clearly visible with no glare. No sunglasses or tinted lenses."
     },
     {
       "id": "au_passport",
@@ -132,7 +158,11 @@
       "eyeLineFromBottomMaxMm": 31.5,
       "background": "light-grey",
       "format": "JPEG",
-      "notes": "Light grey or white background. No glasses since 2020."
+      "notes": "Light grey or white background. No glasses since 2020.",
+      "glasses": "notAllowed",
+      "headCovering": "religiousOrMedicalOnly",
+      "rulesSource": "https://www.passports.gov.au/help/passport-photos",
+      "accessoryNotes": "Glasses should not be worn. Only rare medical exemptions are accepted, supported by a certificate."
     },
     {
       "id": "nz_passport",
@@ -148,7 +178,11 @@
       "eyeLineFromBottomMaxMm": 31.5,
       "background": "light-grey",
       "format": "JPEG",
-      "notes": "Plain light coloured background. Neutral expression."
+      "notes": "Plain light coloured background. Neutral expression.",
+      "glasses": "allowedIfClear",
+      "headCovering": "religiousOrMedicalOnly",
+      "rulesSource": "https://www.passports.govt.nz/passport-photos",
+      "accessoryNotes": "Prescription glasses are allowed if they are not tinted or thick-framed. No sunglasses."
     },
     {
       "id": "ie_passport",
@@ -164,7 +198,9 @@
       "eyeLineFromBottomMaxMm": 31.5,
       "background": "white",
       "format": "JPEG",
-      "notes": "Light grey or cream background; ICAO compliant."
+      "notes": "Light grey or cream background; ICAO compliant.",
+      "glasses": "unverified",
+      "headCovering": "unverified"
     },
     {
       "id": "schengen_generic",
@@ -180,7 +216,9 @@
       "eyeLineFromBottomMaxMm": 31.5,
       "background": "light-grey",
       "format": "JPEG",
-      "notes": "Use when applying for any Schengen visa with generic ICAO requirements."
+      "notes": "Use when applying for any Schengen visa with generic ICAO requirements.",
+      "glasses": "unverified",
+      "headCovering": "unverified"
     },
     {
       "id": "de_passport",
@@ -196,7 +234,11 @@
       "eyeLineFromBottomMaxMm": 31.5,
       "background": "light-grey",
       "format": "JPEG",
-      "notes": "Light grey background mandatory. Biometric standard."
+      "notes": "Light grey background mandatory. Biometric standard.",
+      "glasses": "allowedIfClear",
+      "headCovering": "religiousOrMedicalOnly",
+      "rulesSource": "https://dublin.diplo.de/ie-en/passport-photos-2380534",
+      "accessoryNotes": "Glasses are allowed but must not reflect, and the frames must not hide your eyes. No sunglasses or tinted lenses."
     },
     {
       "id": "de_id",
@@ -212,7 +254,11 @@
       "eyeLineFromBottomMaxMm": 31.5,
       "background": "light-grey",
       "format": "JPEG",
-      "notes": "Same biometric format as German passport."
+      "notes": "Same biometric format as German passport.",
+      "glasses": "allowedIfClear",
+      "headCovering": "religiousOrMedicalOnly",
+      "rulesSource": "https://dublin.diplo.de/ie-en/passport-photos-2380534",
+      "accessoryNotes": "Glasses must not reflect and the frames must not hide your eyes. No tinted lenses."
     },
     {
       "id": "fr_passport",
@@ -228,7 +274,9 @@
       "eyeLineFromBottomMaxMm": 31.5,
       "background": "light-grey",
       "format": "JPEG",
-      "notes": "Light grey background. No smile."
+      "notes": "Light grey background. No smile.",
+      "glasses": "unverified",
+      "headCovering": "unverified"
     },
     {
       "id": "es_passport",
@@ -244,7 +292,9 @@
       "eyeLineFromBottomMaxMm": 18.2,
       "background": "white",
       "format": "JPEG",
-      "notes": "Spanish passport uses 32x26mm photo. White background."
+      "notes": "Spanish passport uses 32x26mm photo. White background.",
+      "glasses": "unverified",
+      "headCovering": "unverified"
     },
     {
       "id": "it_passport",
@@ -260,7 +310,9 @@
       "eyeLineFromBottomMaxMm": 28.0,
       "background": "white",
       "format": "JPEG",
-      "notes": "White or light background. Italian biometric format 35x40mm."
+      "notes": "White or light background. Italian biometric format 35x40mm.",
+      "glasses": "unverified",
+      "headCovering": "unverified"
     },
     {
       "id": "nl_passport",
@@ -276,7 +328,9 @@
       "eyeLineFromBottomMaxMm": 31.5,
       "background": "light-grey",
       "format": "JPEG",
-      "notes": "Plain even-coloured grey background mandatory."
+      "notes": "Plain even-coloured grey background mandatory.",
+      "glasses": "unverified",
+      "headCovering": "unverified"
     },
     {
       "id": "se_passport",
@@ -292,7 +346,9 @@
       "eyeLineFromBottomMaxMm": 31.5,
       "background": "light-grey",
       "format": "JPEG",
-      "notes": "Light grey background; ICAO biometric."
+      "notes": "Light grey background; ICAO biometric.",
+      "glasses": "unverified",
+      "headCovering": "unverified"
     },
     {
       "id": "ch_passport",
@@ -308,7 +364,9 @@
       "eyeLineFromBottomMaxMm": 31.5,
       "background": "light-grey",
       "format": "JPEG",
-      "notes": "Light grey or white background. Biometric standard."
+      "notes": "Light grey or white background. Biometric standard.",
+      "glasses": "unverified",
+      "headCovering": "unverified"
     },
     {
       "id": "jp_passport",
@@ -324,7 +382,9 @@
       "eyeLineFromBottomMaxMm": 31.5,
       "background": "white",
       "format": "JPEG",
-      "notes": "Plain background, white preferred. Crown to chin 32-36mm."
+      "notes": "Plain background, white preferred. Crown to chin 32-36mm.",
+      "glasses": "unverified",
+      "headCovering": "unverified"
     },
     {
       "id": "cn_passport",
@@ -340,7 +400,9 @@
       "eyeLineFromBottomMaxMm": 33.6,
       "background": "white",
       "format": "JPEG",
-      "notes": "33x48mm. White background. No glasses, ears visible."
+      "notes": "33x48mm. White background. No glasses, ears visible.",
+      "glasses": "unverified",
+      "headCovering": "unverified"
     },
     {
       "id": "cn_visa",
@@ -356,7 +418,11 @@
       "eyeLineFromBottomMaxMm": 33.6,
       "background": "white",
       "format": "JPEG",
-      "notes": "Same dimensions as Chinese passport."
+      "notes": "Same dimensions as Chinese passport.",
+      "glasses": "allowedIfClear",
+      "headCovering": "religiousOrMedicalOnly",
+      "rulesSource": "https://losangeles.china-consulate.gov.cn/eng/visa/chinavisa/201611/t20161122_5421687.htm",
+      "accessoryNotes": "Eyeglasses are allowed except thick-rimmed, tinted or glare glasses. Head wear only for religious reasons, with no facial feature obscured."
     },
     {
       "id": "in_passport",
@@ -372,7 +438,11 @@
       "eyeLineFromBottomMaxMm": 35.7,
       "background": "white",
       "format": "JPEG",
-      "notes": "2x2 inch. Plain white background. Face must occupy 50% of photo."
+      "notes": "2x2 inch. Plain white background. Face must occupy 50% of photo.",
+      "glasses": "notAllowed",
+      "headCovering": "religiousOrMedicalOnly",
+      "rulesSource": "https://portal3.passportindia.gov.in/Online/pdf/Guidelines_for_ICAO_Compliant_Photographs_for_Passport_Applications.pdf",
+      "accessoryNotes": "Glasses are to be removed. No tinted or dark glasses, and no reflection from lenses."
     },
     {
       "id": "in_visa",
@@ -388,7 +458,11 @@
       "eyeLineFromBottomMaxMm": 35.7,
       "background": "white",
       "format": "JPEG",
-      "notes": "Same as Indian passport. White background mandatory."
+      "notes": "Same as Indian passport. White background mandatory.",
+      "glasses": "notAllowed",
+      "headCovering": "religiousOrMedicalOnly",
+      "rulesSource": "https://portal3.passportindia.gov.in/Online/pdf/Guidelines_for_ICAO_Compliant_Photographs_for_Passport_Applications.pdf",
+      "accessoryNotes": "Glasses are to be removed, as for the Indian passport."
     },
     {
       "id": "sg_passport",
@@ -404,7 +478,11 @@
       "eyeLineFromBottomMaxMm": 31.5,
       "background": "white",
       "format": "JPEG",
-      "notes": "Plain white background. ICA biometric requirements."
+      "notes": "Plain white background. ICA biometric requirements.",
+      "glasses": "allowedIfClear",
+      "headCovering": "religiousOrMedicalOnly",
+      "rulesSource": "https://www.ica.gov.sg/photo-guidelines",
+      "accessoryNotes": "ICA prefers photos without glasses. Clear, untinted lenses with thin frames are accepted; tinted or thick-framed glasses are not."
     },
     {
       "id": "ae_passport",
@@ -420,7 +498,9 @@
       "eyeLineFromBottomMaxMm": 38.5,
       "background": "white",
       "format": "JPEG",
-      "notes": "UAE visa uses 43x55mm. White background. Both ears visible."
+      "notes": "UAE visa uses 43x55mm. White background. Both ears visible.",
+      "glasses": "unverified",
+      "headCovering": "unverified"
     },
     {
       "id": "br_passport",
@@ -436,7 +516,9 @@
       "eyeLineFromBottomMaxMm": 49.0,
       "background": "white",
       "format": "JPEG",
-      "notes": "5x7cm photo. Plain white background. Front-facing."
+      "notes": "5x7cm photo. Plain white background. Front-facing.",
+      "glasses": "unverified",
+      "headCovering": "unverified"
     },
     {
       "id": "mx_passport",
@@ -452,7 +534,9 @@
       "eyeLineFromBottomMaxMm": 31.5,
       "background": "white",
       "format": "JPEG",
-      "notes": "Plain white background. Forehead and ears uncovered."
+      "notes": "Plain white background. Forehead and ears uncovered.",
+      "glasses": "unverified",
+      "headCovering": "unverified"
     },
     {
       "id": "za_passport",
@@ -468,7 +552,9 @@
       "eyeLineFromBottomMaxMm": 31.5,
       "background": "white",
       "format": "JPEG",
-      "notes": "Plain white or off-white background. ICAO biometric."
+      "notes": "Plain white or off-white background. ICAO biometric.",
+      "glasses": "unverified",
+      "headCovering": "unverified"
     },
     {
       "id": "us_drivers_license",
@@ -484,7 +570,10 @@
       "eyeLineFromBottomMaxMm": 31.5,
       "background": "white",
       "format": "JPEG",
-      "notes": "Most US states use ICAO-style photos for REAL ID. Check state DMV."
+      "notes": "Most US states use ICAO-style photos for REAL ID. Check state DMV.",
+      "glasses": "unverified",
+      "headCovering": "unverified"
     }
-  ]
+  ],
+  "dataVersion": 3
 }

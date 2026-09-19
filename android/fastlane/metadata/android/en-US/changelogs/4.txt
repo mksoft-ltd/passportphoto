@@ -1,0 +1,5 @@
+Checks the background colour, not just its evenness.
+
+The background check only measured whether the wall was even, and it sampled a strip that included the top of your head — so a white wall behind dark hair failed while an evenly-lit black wall passed. It now samples the wall itself and tests that it is plain, light and free of a colour cast.
+
+New: a neutral-expression check, and each document lists its glasses and head-covering rules, quoted from the issuing authority.

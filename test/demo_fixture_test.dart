@@ -9,7 +9,7 @@ import 'support/specs.dart';
 /// the fixture ships a screenshot of the app failing its own test — and nothing
 /// would catch it, because the harness captures whatever is on screen.
 ///
-/// The seventh check (eye line) is computed from the drawing's own geometry
+/// The eye-line check is computed from the drawing's own geometry
 /// rather than hard-coded to `passed: true`, which is the right call and is
 /// also why it can now drift: redrawing the portrait, or changing a spec's
 /// eye-line band, could put it out of range. That is what these assert.
@@ -18,7 +18,7 @@ void main() {
       () {
     for (final spec in bundledSpecs()) {
       final checks = DemoData.checksFor(spec);
-      expect(checks, hasLength(7), reason: spec.id);
+      expect(checks, hasLength(8), reason: spec.id);
       for (final c in checks) {
         expect(
           c.passed,

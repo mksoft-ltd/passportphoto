@@ -1,13 +1,14 @@
 Take your passport, visa or ID photo at home, and find out whether it meets the spec before you print it.
 
-Passport Photo Studio measures your photo against the published requirements for the document you actually need, then shows its working: seven checks, each with a pass or fail and a plain-English reason.
+Passport Photo Studio measures your photo against the published requirements for the document you actually need, then shows its working: eight checks, each with a pass or fail and a plain-English reason, plus the rules only you can confirm — glasses and head coverings — quoted from the issuing authority.
 
 - Single face detected
 - Eyes open
 - Looking forward
+- Neutral expression
 - Face size within spec
 - Eye line within spec
-- Background uniform
+- Background: plain, light and free of a colour cast
 - Photo fully captured
 
 If something is wrong, you find out now, with the reason, instead of at the counter.

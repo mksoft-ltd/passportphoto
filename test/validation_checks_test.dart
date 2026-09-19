@@ -117,18 +117,27 @@ void main() {
     });
   });
 
-  group('Background uniform', () {
+  group('Background', () {
+    // Not the shared harness subject. That image carries three full-width
+    // measuring stripes, one of which lands in the region this check samples —
+    // it is a ruler for the crop, not a photograph of anyone. Feeding it here
+    // measured the ruler. `test/background_check_test.dart` covers the full
+    // matrix of walls; these two keep the check wired into this file's report.
     test('passes a plain evenly-lit wall', () async {
-      final photo = await runProcessor(spec: ukPassport());
-      expect(check(photo, 'Background uniform').passed, isTrue);
+      final photo = await runProcessor(
+        spec: ukPassport(),
+        sourceJpeg: _plainWall(img.ColorRgb8(244, 242, 236)),
+      );
+      final result = check(photo, 'Background');
+      expect(result.passed, isTrue, reason: result.detail);
     });
 
     test('fails a busy background', () async {
       final photo = await runProcessor(
         spec: ukPassport(),
         sourceJpeg: _stripedBackdrop(),
-      );
-      final result = check(photo, 'Background uniform');
+        );
+      final result = check(photo, 'Background');
       expect(result.passed, isFalse);
       expect(result.detail, contains('uneven'));
     });
@@ -367,16 +376,16 @@ void main() {
 
   test('allPassed and passedCount agree with the checks', () async {
     final good = await runProcessor(spec: ukPassport());
-    expect(good.checks, hasLength(7));
+    expect(good.checks, hasLength(8));
     expect(good.passedCount, good.checks.where((c) => c.passed).length);
-    expect(good.allPassed, good.passedCount == 7);
+    expect(good.allPassed, good.passedCount == 8);
 
     final bad = await runProcessor(
       spec: ukPassport(),
       faces: [subject.faceWith(leftEyeOpen: 0.0, yaw: 40)],
     );
     expect(bad.allPassed, isFalse);
-    expect(bad.passedCount, lessThan(7));
+    expect(bad.passedCount, lessThan(8));
   });
 
   test('the output is exactly the pixel size the spec asks for', () async {
@@ -441,9 +450,39 @@ void main() {
   );
 }
 
+/// A plain wall with a head on it, in the colour given.
+///
+/// Built here rather than taken from the crop harness because the harness
+/// paints full-width stripes at the crown, eye line and chin to measure the
+/// crop with, and the crown stripe falls inside the region the background
+/// check samples.
+Uint8List _plainWall(img.Color wall) {
+  final image = img.Image(
+    width: SyntheticSubject.sourceWidth,
+    height: SyntheticSubject.sourceHeight,
+  );
+  img.fill(image, color: wall);
+  // A head, so the sampled corners are wall and the middle is not.
+  final cx = SyntheticSubject.sourceWidth ~/ 2;
+  final cy = (SyntheticSubject.crownY + SyntheticSubject.chinY) ~/ 2;
+  final ry = (SyntheticSubject.chinY - SyntheticSubject.crownY) ~/ 2;
+  final rx = (ry * 0.72).round();
+  for (var y = cy - ry; y <= cy + ry; y++) {
+    if (y < 0 || y >= image.height) continue;
+    for (var x = cx - rx; x <= cx + rx; x++) {
+      if (x < 0 || x >= image.width) continue;
+      final dx = (x - cx) / rx, dy = (y - cy) / ry;
+      if (dx * dx + dy * dy <= 1.0) {
+        image.setPixel(x, y, img.ColorRgb8(58, 48, 44));
+      }
+    }
+  }
+  return Uint8List.fromList(img.encodeJpg(image, quality: 92));
+}
+
 /// A backdrop with hard vertical bars across the top, so the uniformity check
-/// has something to object to. The check samples the top tenth of the finished
-/// photo, which is why the bars go there.
+/// has something to object to. The check samples the upper corners of the
+/// finished photo, which is why the bars go there.
 Uint8List _stripedBackdrop() {
   final image = img.decodeImage(subjectJpeg())!;
   for (var y = 0; y < image.height ~/ 2; y++) {

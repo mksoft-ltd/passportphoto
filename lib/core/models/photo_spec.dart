@@ -45,6 +45,48 @@ extension BackgroundColorX on BackgroundColor {
   }
 }
 
+
+/// Whether the issuing authority lets you keep your glasses on.
+///
+/// There is no automatic check behind this and there cannot be: ML Kit's
+/// `Face` carries head angles, eye-open and smiling probabilities, landmarks
+/// and contours, and nothing about eyewear. So this is published to the user
+/// as a rule to follow, not measured and reported as a pass. Pretending to
+/// check it would be worse than saying nothing, because the whole claim of
+/// the compliance report is that it shows its working.
+enum GlassesRule {
+  /// The authority requires glasses to be removed.
+  notAllowed,
+
+  /// Permitted, subject to the usual conditions — no tint, no glare, frames
+  /// clear of the eyes.
+  allowedIfClear,
+
+  /// Not confirmed against the authority's own published guidance. The app
+  /// says so rather than guessing.
+  unverified,
+}
+
+/// Whether a hat, scarf or other head covering is permitted.
+enum HeadCoveringRule {
+  /// Religious or medical reasons only, with the full face visible.
+  religiousOrMedicalOnly,
+
+  /// Not confirmed against the authority's own published guidance.
+  unverified,
+}
+
+GlassesRule _parseGlasses(String? raw) => switch (raw) {
+      'notAllowed' => GlassesRule.notAllowed,
+      'allowedIfClear' => GlassesRule.allowedIfClear,
+      _ => GlassesRule.unverified,
+    };
+
+HeadCoveringRule _parseHeadCovering(String? raw) => switch (raw) {
+      'religiousOrMedicalOnly' => HeadCoveringRule.religiousOrMedicalOnly,
+      _ => HeadCoveringRule.unverified,
+    };
+
 @immutable
 class PhotoSpec {
   const PhotoSpec({
@@ -64,6 +106,10 @@ class PhotoSpec {
     this.fileSizeMinKb,
     this.fileSizeMaxKb,
     this.notes,
+    this.glasses = GlassesRule.unverified,
+    this.headCovering = HeadCoveringRule.unverified,
+    this.rulesSource,
+    this.accessoryNotes,
   });
 
   final String id;
@@ -88,6 +134,25 @@ class PhotoSpec {
   final int? fileSizeMinKb;
   final int? fileSizeMaxKb;
   final String? notes;
+
+  /// What this document says about glasses. Advisory — see [GlassesRule].
+  final GlassesRule glasses;
+
+  /// What this document says about head coverings.
+  final HeadCoveringRule headCovering;
+
+  /// The authority's own page the two rules above were read from, or null
+  /// when they have not been confirmed against one.
+  final String? rulesSource;
+
+  /// The rules in the authority's own terms, for the screen to show.
+  final String? accessoryNotes;
+
+  /// True when [glasses] and [headCovering] were read off the issuing
+  /// authority's published guidance rather than left unconfirmed.
+  bool get accessoryRulesVerified =>
+      glasses != GlassesRule.unverified &&
+      headCovering != HeadCoveringRule.unverified;
 
   /// Output pixel width.
   int get widthPx => (widthMm / 25.4 * dpi).round();
@@ -148,6 +213,10 @@ class PhotoSpec {
       fileSizeMinKb: (json['fileSizeMinKb'] as num?)?.toInt(),
       fileSizeMaxKb: (json['fileSizeMaxKb'] as num?)?.toInt(),
       notes: json['notes'] as String?,
+      glasses: _parseGlasses(json['glasses'] as String?),
+      headCovering: _parseHeadCovering(json['headCovering'] as String?),
+      rulesSource: json['rulesSource'] as String?,
+      accessoryNotes: json['accessoryNotes'] as String?,
     );
   }
 

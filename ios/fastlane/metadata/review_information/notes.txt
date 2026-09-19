@@ -2,7 +2,7 @@ Passport Photo Studio - notes for App Review
 Froggy Eye Ltd - v1.0.0 - com.froggyeye.passportphoto
 
 WHAT THE APP DOES
-The user picks a country and document type (UK passport, US visa, and so on), takes a photo with the in-app camera or picks one from their library, and the app crops and scales it to that document's published dimensions and resolution. It then runs seven compliance checks and shows a pass or fail with a plain-English reason for each: single face detected, eyes open, looking forward, face size within spec, eye line within spec, background uniform, photo fully captured.
+The user picks a country and document type (UK passport, US visa, and so on), takes a photo with the in-app camera or picks one from their library, and the app crops and scales it to that document's published dimensions and resolution. It then runs eight compliance checks and shows a pass or fail with a plain-English reason for each: single face detected, eyes open, looking forward, neutral expression, face size within spec, eye line within spec, background, photo fully captured. Below them it lists the rules the camera cannot judge — glasses and head coverings — quoted from the issuing authority's own guidance, and says plainly when a document's rules have not been confirmed.
 
 NO ACCOUNT IS REQUIRED
 There is no sign-in, registration or backend anywhere in the app, so no demo account is needed. Every feature is reachable from a fresh install.
@@ -10,7 +10,7 @@ There is no sign-in, registration or backend anywhere in the app, so no demo acc
 HOW TO TEST (about two minutes)
 1. Launch the app. The Home screen shows the currently selected document; tap it to open the picker and choose any of the 30 specs. Nothing in the picker is locked; specs are never gated.
 2. Tap "Take a new photo" and allow camera access, or tap "Pick from gallery" and choose any photo containing a face. On a simulator the gallery route is the quicker one.
-3. The Result screen shows the cropped photo, the spec summary and the seven-check compliance report. A deliberately poor photo (off-centre, busy background, head turned) is the fastest way to see failing checks and their explanations.
+3. The Result screen shows the cropped photo, the spec summary and the eight-check compliance report. A deliberately poor photo (off-centre, busy background, head turned) is the fastest way to see failing checks and their explanations.
 4. Tap "View 4x6 inch print sheet" to see the print layout.
 5. Free saves are watermarked and downscaled. Tapping a Pro-only action opens the paywall.
 

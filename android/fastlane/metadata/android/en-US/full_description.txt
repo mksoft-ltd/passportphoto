@@ -1,13 +1,14 @@
 Skip the booth. Passport Photo Studio is a passport photo app that crops your photo to the right passport size and checks it against the country's own spec before you print it.
 
-Where a simple passport photo maker hands you a crop and wishes you luck, this one shows its working: seven checks, each with a pass or fail and a plain-English reason.
+Where a simple passport photo maker hands you a crop and wishes you luck, this one shows its working: eight checks, each with a pass or fail and a plain-English reason, plus the rules only you can confirm — glasses and head coverings — quoted from the issuing authority.
 
 - Single face detected
 - Eyes open
 - Looking forward
+- Neutral expression
 - Face size within spec
 - Eye line within spec
-- Background uniform
+- Background: plain, light and free of a colour cast
 - Photo fully captured
 
 If something is wrong, you find out now, with the reason, instead of at the counter.

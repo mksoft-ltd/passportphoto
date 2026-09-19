@@ -38,6 +38,7 @@ class FaceMeasurement {
     required this.pitch,
     required this.leftEyeOpenProbability,
     required this.rightEyeOpenProbability,
+    required this.smilingProbability,
   });
 
   factory FaceMeasurement.fromFace(Face face) {
@@ -56,6 +57,9 @@ class FaceMeasurement {
       pitch: face.headEulerAngleX ?? 0,
       leftEyeOpenProbability: face.leftEyeOpenProbability ?? 1.0,
       rightEyeOpenProbability: face.rightEyeOpenProbability ?? 1.0,
+      // Null when the detector declines to classify. Treated as not smiling,
+      // so a detector that cannot tell never fails the photograph.
+      smilingProbability: face.smilingProbability ?? 0.0,
     );
   }
 
@@ -73,6 +77,9 @@ class FaceMeasurement {
   final double pitch;
   final double leftEyeOpenProbability;
   final double rightEyeOpenProbability;
+
+  /// ML Kit's own confidence that the subject is smiling, 0-1.
+  final double smilingProbability;
 
   double get boxBottom => boxTop + boxHeight;
   double get boxCentreX => boxLeft + boxWidth / 2.0;
@@ -384,6 +391,28 @@ List<ValidationCheck> _runValidations({
             'roll ${roll.toStringAsFixed(1)}°, pitch ${pitch.toStringAsFixed(1)}°).',
   ));
 
+  // 3b. Neutral expression.
+  //
+  // Every bundled spec asks for this in its notes — "neutral expression",
+  // "no smiling, mouth closed" — and ML Kit has returned a smiling
+  // probability on every detection since the app shipped. It was read into
+  // `FaceMeasurement`'s neighbours and never used, so the one expression rule
+  // the detector can actually judge went unreported.
+  //
+  // 0.55 rather than 0.5: a closed-mouth pleasant face scores a little above
+  // a deadpan one, and failing that would be wrong. What this catches is a
+  // visible smile, which is what gets photographs refused.
+  final smiling = face.smilingProbability > 0.55;
+  checks.add(ValidationCheck(
+    label: 'Neutral expression',
+    passed: !smiling,
+    detail: smiling
+        ? 'You look like you are smiling '
+            '(${(face.smilingProbability * 100).round()}% confidence). '
+            'Document photos need a neutral expression with your mouth closed.'
+        : 'Neutral expression, mouth closed.',
+  ));
+
   // 4. Face size within spec range, measured from the detected head against
   // the rectangle that was actually cut. Dividing by the requested crop
   // height instead would restate the number the crop was built from and pass
@@ -446,16 +475,56 @@ List<ValidationCheck> _runValidations({
     detail: eyeDetail,
   ));
 
-  // 6. Background uniformity
+  // 6. Background: plain, light, and free of a colour cast.
+  //
+  // Until 2026-09-19 this measured evenness and nothing else — the mean colour
+  // was computed and thrown away — so the one thing the spec actually states
+  // about the background was never tested. A subject photographed against an
+  // evenly-lit black or deep red wall was told the background was fine.
+  //
+  // The thresholds only catch a wall no authority would accept, deliberately.
+  // "Plain light-coloured" (UK), "white or off-white" (US) and "light grey"
+  // (Germany) are different rules, and a check tight enough to tell them apart
+  // would fail correct photographs over the white balance of the room. So
+  // brightness and colour cast are judged, the spec's own requirement is
+  // quoted either way, and the user is left to match the shade.
   final bg = _measureBackground(resized);
   final bgUniform = bg.stdDev < 18;
+  final bgLight = bg.meanLum >= 170;
+  final bgNeutral = bg.chroma <= 0.18;
+  final bgOk = bgUniform && bgLight && bgNeutral;
+  final wanted = spec.background.label.toLowerCase();
+  // Sentence case for the branches that open with it.
+  final wantedCap =
+      spec.background.label[0].toUpperCase() + wanted.substring(1);
+  final String bgDetail;
+  if (bgOk) {
+    bgDetail = 'Plain, evenly-lit light background. '
+        'This document asks for $wanted — check the shade matches.';
+  } else if (!bgUniform) {
+    // Reported before brightness and colour: a shadow or an object behind the
+    // subject drags the mean around too, so "uneven" is both the more
+    // specific diagnosis and the one that has to be fixed first.
+    bgDetail = 'The background is uneven (variance '
+        '${bg.stdDev.toStringAsFixed(1)}) — a shadow, a gradient or an object '
+        'behind you. Use a plain wall and even lighting.';
+  } else if (!bgLight) {
+    bgDetail = 'The background is too dark (brightness '
+        '${bg.meanLum.round()}/255). $wantedCap is required — shoot against a '
+        'plain, well-lit wall.';
+  } else if (!bgNeutral) {
+    bgDetail = 'The background has a colour cast '
+        '(${(bg.chroma * 100).round()}% saturation). $wantedCap is required — '
+        'use a plain wall without strong colour.';
+  } else {
+    // Unreachable: bgOk is the conjunction of the three above.
+    bgDetail = 'The background does not meet this document\'s requirement '
+        '($wanted).';
+  }
   checks.add(ValidationCheck(
-    label: 'Background uniform',
-    passed: bgUniform,
-    detail: bgUniform
-        ? 'Background looks consistent (variance ${bg.stdDev.toStringAsFixed(1)}).'
-        : 'Background is uneven (variance ${bg.stdDev.toStringAsFixed(1)}). '
-            'Use a plain wall and even lighting.',
+    label: 'Background',
+    passed: bgOk,
+    detail: bgDetail,
   ));
 
   // 7. The whole head made it into the photo, and the crop it came from fit
@@ -485,31 +554,67 @@ List<ValidationCheck> _runValidations({
 String _mm(double v) =>
     v == v.roundToDouble() ? v.toStringAsFixed(0) : v.toStringAsFixed(1);
 
+/// Measures the wall behind the subject, from the two upper corners.
+///
+/// The region matters more than the statistics. This used to sample the whole
+/// width of the top 10% of rows, on the stated grounds that it was "reliably
+/// background (above the head)" — but [HeadFraming.crownMargin] is 0.04, so a
+/// correctly framed head's crown sits as close as 4% from the top edge and the
+/// bottom half of that window is hair. The measurement was of hair against
+/// wall, not of wall, and it inverted the check: a white wall behind dark hair
+/// read as variance 77 and *failed*, while a black wall behind dark hair read
+/// as variance 4 and *passed*. Both measured on synthetic subjects; see
+/// `test/background_check_test.dart`.
+///
+/// The head is centred and, across the bundled specs, spans roughly the middle
+/// two thirds of the width, so the outer eighth of each side stays wall even
+/// when the crown is at its highest. Shoulders arrive well below the top
+/// quarter.
 _BackgroundStats _measureBackground(img.Image image) {
-  // Sample the top 10% of rows — for a properly-cropped passport photo this
-  // is reliably background (above the head).
-  final h = math.max(1, (image.height * 0.10).round());
-  final samples = <int>[];
-  final stride = math.max(1, image.width ~/ 60);
+  final bandWidth = math.max(1, (image.width * 0.12).round());
+  final bandHeight = math.max(1, (image.height * 0.25).round());
+  final xStride = math.max(1, bandWidth ~/ 10);
+  final yStride = math.max(1, bandHeight ~/ 12);
 
-  for (int y = 0; y < h; y += math.max(1, h ~/ 6)) {
-    for (int x = 0; x < image.width; x += stride) {
-      final p = image.getPixel(x, y);
-      // Greyscale luminance (BT.601).
-      final lum = (0.299 * p.r + 0.587 * p.g + 0.114 * p.b).round();
-      samples.add(lum);
+  final lums = <double>[];
+  double sumR = 0, sumG = 0, sumB = 0;
+
+  void sample(int x, int y) {
+    final p = image.getPixel(x, y);
+    sumR += p.r;
+    sumG += p.g;
+    sumB += p.b;
+    // BT.601 luminance.
+    lums.add(0.299 * p.r + 0.587 * p.g + 0.114 * p.b);
+  }
+
+  for (int y = 0; y < bandHeight; y += yStride) {
+    for (int x = 0; x < bandWidth; x += xStride) {
+      sample(x, y);
+      final right = image.width - 1 - x;
+      if (right > x) sample(right, y);
     }
   }
 
-  if (samples.isEmpty) return const _BackgroundStats(mean: 0, stdDev: 0);
-  final mean = samples.reduce((a, b) => a + b) / samples.length;
+  if (lums.isEmpty) {
+    return const _BackgroundStats(
+        meanR: 0, meanG: 0, meanB: 0, meanLum: 0, stdDev: 0);
+  }
+  final n = lums.length;
+  final meanLum = lums.reduce((a, b) => a + b) / n;
   double variance = 0;
-  for (final s in samples) {
-    final d = s - mean;
+  for (final s in lums) {
+    final d = s - meanLum;
     variance += d * d;
   }
-  variance /= samples.length;
-  return _BackgroundStats(mean: mean, stdDev: math.sqrt(variance));
+  variance /= n;
+  return _BackgroundStats(
+    meanR: sumR / n,
+    meanG: sumG / n,
+    meanB: sumB / n,
+    meanLum: meanLum,
+    stdDev: math.sqrt(variance),
+  );
 }
 
 // ---- Print sheet (4x6 inch) --------------------------------------------
@@ -615,7 +720,36 @@ class _CropResult {
 }
 
 class _BackgroundStats {
-  const _BackgroundStats({required this.mean, required this.stdDev});
-  final double mean;
+  const _BackgroundStats({
+    required this.meanR,
+    required this.meanG,
+    required this.meanB,
+    required this.meanLum,
+    required this.stdDev,
+  });
+  final double meanR;
+  final double meanG;
+  final double meanB;
+
+  /// Mean BT.601 luminance, 0-255. The brightness half of "plain light
+  /// background" — the rule every authority in `assets/specs/SOURCES.md`
+  /// states in some form.
+  final double meanLum;
+
+  /// Spread of luminance across the sampled wall. High means a shadow, a
+  /// gradient or an object, not a plain wall.
   final double stdDev;
+
+  /// How far the wall is from neutral grey, as a fraction of its own
+  /// brightest channel — HSV saturation of the mean colour.
+  ///
+  /// This is what separates a cream wall (about 0.05, fine everywhere) and a
+  /// light blue one (about 0.11) from a painted feature wall. It is a ratio
+  /// rather than an absolute channel spread so that it does not tighten as the
+  /// photo gets darker.
+  double get chroma {
+    final maxC = math.max(meanR, math.max(meanG, meanB));
+    final minC = math.min(meanR, math.min(meanG, meanB));
+    return maxC <= 0 ? 0 : (maxC - minC) / maxC;
+  }
 }

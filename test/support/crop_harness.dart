@@ -34,6 +34,9 @@ import 'package:passport_photo_app/features/processing/processed_photo.dart';
 /// crop that fits inside the source with room to spare. That matters: the
 /// clamp in `_computeCropRect` silently rescues the framing when the requested
 /// crop runs off the source, which would hide exactly what is being measured.
+/// Distinguishes "left at the default" from "deliberately null".
+const Object _unset = Object();
+
 class SyntheticSubject {
   const SyntheticSubject({this.eyeLineWithinHead = harnessEye});
 
@@ -88,6 +91,10 @@ class SyntheticSubject {
     double? yaw,
     double? roll,
     double? pitch,
+    /// ML Kit's smiling confidence. Explicitly nullable and defaulted to a
+    /// sentinel so a test can drive the neutral-expression check with a real
+    /// null — the detector declining to classify — as well as with a value.
+    Object? smiling = _unset,
     double heightScale = 1.0,
     double offsetX = 0,
     double offsetY = 0,
@@ -124,6 +131,8 @@ class SyntheticSubject {
             }
           : const {},
       contours: const {},
+      smilingProbability:
+          identical(smiling, _unset) ? 0.0 : smiling as double?,
       headEulerAngleX: pitch ?? 0,
       headEulerAngleY: yaw ?? 0,
       headEulerAngleZ: roll ?? 0,

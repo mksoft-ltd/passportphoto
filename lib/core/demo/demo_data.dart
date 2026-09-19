@@ -94,6 +94,11 @@ class DemoData {
         passed: true,
         detail: 'Head is centered and facing the camera.',
       ),
+      const ValidationCheck(
+        label: 'Neutral expression',
+        passed: true,
+        detail: 'Neutral expression, mouth closed.',
+      ),
       ValidationCheck(
         label: 'Face size within spec',
         passed: true,
@@ -102,9 +107,10 @@ class DemoData {
       ),
       _eyeLineCheck(spec),
       const ValidationCheck(
-        label: 'Background uniform',
+        label: 'Background',
         passed: true,
-        detail: 'Background looks consistent (variance 3.1).',
+        detail: 'Plain, evenly-lit light background. '
+            'This document asks for off-white — check the shade matches.',
       ),
       const ValidationCheck(
         label: 'Photo fully captured',
