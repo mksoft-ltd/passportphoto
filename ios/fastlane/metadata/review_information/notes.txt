@@ -1,13 +1,20 @@
-Passport Photo Studio - Froggy Eye Ltd - v1.0.2 - com.froggyeye.passportphotostudio
+Passport Photo Studio - Froggy Eye Ltd - v1.0.3 - com.froggyeye.passportphotostudio
 
 ABOUT THIS SUBMISSION
-An earlier version (1.0.0) was submitted under a different App Store Connect record, which we removed; this is a fresh record for version 1.0.2. Changes since 1.0.0: a new app icon; the background check now tests colour (plain, light, no colour cast) in the corners outside the head; a new neutral-expression check (eight checks in total); and glasses/head-covering rules quoted from each issuing authority. The app, its code and all artwork are original work by Froggy Eye Ltd; no template or purchased code is used.
+Version 1.0.0 was submitted under an earlier App Store Connect record, which we removed. This fresh record received 1.0.2, withdrawn before review in favour of this 1.0.3. Since 1.0.0: a colour-aware background check, a neutral-expression check (eight in total), and glasses/head-covering rules quoted per authority. The app, code and artwork are original work by Froggy Eye Ltd; no template or purchased code.
+
+NEW IN 1.0.3
+- New app icon.
+- Spain passport/DNI now portrait, 26 x 32 mm (was landscape).
+- A failed check shows a fix hint; "Fix and re-shoot" returns to the camera, document kept.
+- After unlocking Pro, the save that opened the paywall completes by itself.
+- Rating prompt via SKStoreReviewController, only after saving a photo that passed every check, never in the first session; no pre-prompt or incentive.
 
 WHAT THE APP DOES
-Pick a country and document (UK passport, US visa and so on), take a photo with the in-app camera or pick one from the library, and the app crops and scales it to that document's published size and resolution. It then runs eight checks with a pass/fail and plain-English reason each: single face, eyes open, looking forward, neutral expression, face size, eye line, background, photo fully captured.
+Pick a document (UK passport, US visa etc.), take a photo with the in-app camera or pick one from the library, and the app crops and scales it to that document's published size and resolution. It then runs eight checks with a pass/fail and plain-English reason each: single face, eyes open, looking forward, neutral expression, face size, eye line, background, photo fully captured.
 
 NO ACCOUNT IS REQUIRED
-No sign-in or backend; every feature is reachable from a fresh install.
+No sign-in or backend; everything is reachable from a fresh install.
 
 HOW TO TEST (about two minutes)
 1. Home shows the selected document; tap it to choose any of the 30 specs. Nothing in the picker is locked.
