@@ -1,9 +1,11 @@
+import 'dart:async';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../core/services/review_prompter.dart';
 import '../processing/processed_photo.dart';
 import '../processing/processing_providers.dart';
 import '../purchase/entitlement_controller.dart';
@@ -43,6 +45,10 @@ class PrintSheetScreen extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(title: const Text('4×6" print sheet')),
       body: preview.when(
+        // Buying Pro from this screen rebuilds the preview (it watches the
+        // entitlement). Keeping the old sheet up meanwhile keeps [_SheetView]
+        // mounted, so the save that sent the user to the paywall can finish.
+        skipLoadingOnReload: true,
         loading: () => const Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -141,18 +147,13 @@ class _SheetViewState extends ConsumerState<_SheetView> {
   }
 
   Future<void> _save(ProcessedPhoto photo) async {
+    final prompter = ref.read(reviewPrompterProvider);
     setState(() => _saving = true);
+    ExportResult? result;
     try {
-      final result = await ref.read(exportServiceProvider).savePrintSheet(photo);
-      if (!mounted) return;
-      if (result.outcome == ExportOutcome.requiresPro) {
-        context.push('/pro');
-        return;
-      }
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(result.message)),
-      );
+      result = await ref.read(exportServiceProvider).savePrintSheet(photo);
     } catch (e) {
+      prompter.suppressSession();
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Save failed: $e')),
@@ -160,6 +161,30 @@ class _SheetViewState extends ConsumerState<_SheetView> {
       }
     } finally {
       if (mounted) setState(() => _saving = false);
+    }
+    if (result == null || !mounted) return;
+
+    switch (result.outcome) {
+      case ExportOutcome.requiresPro:
+        // Bought (or restored) on the paywall: finish the save the user was
+        // making instead of handing them back the same button.
+        final bought = await context.push<bool>('/pro');
+        if (bought == true && mounted) await _save(photo);
+      case ExportOutcome.failed:
+        prompter.suppressSession();
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(result.message)),
+        );
+      case ExportOutcome.saved:
+      case ExportOutcome.savedPreview:
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(result.message)),
+        );
+        unawaited(prompter.onSaveSucceeded(
+          fullResolution: result.outcome == ExportOutcome.saved,
+          allChecksPassed: photo.allPassed,
+          isMounted: () => mounted,
+        ));
     }
   }
 }

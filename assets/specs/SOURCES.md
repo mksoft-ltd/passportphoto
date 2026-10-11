@@ -1,6 +1,6 @@
 # Where the numbers in `photo_specs.json` come from
 
-Last verified: **2026-08-05**. Data version 2.
+Last verified: **2026-08-05**. Data version 2. Spain re-verified **2026-10-11** (data version 4).
 
 This file exists because the app's headline claim is that its 30 specs match
 what issuing authorities actually publish. That claim is only as good as its
@@ -98,7 +98,7 @@ figure in millimetres or percent; this was checked individually, not assumed.
 | 40 mm | 20–28 mm | `it_passport` |
 | 48 mm | 24–33.6 mm | `cn_passport`, `cn_visa` |
 | 55 mm | 27.5–38.5 mm | `ae_passport` |
-| 26 mm | 13–18.2 mm | `es_passport` |
+| 32 mm | 16–22.4 mm | `es_passport` (photo is 26 × 32 mm, portrait — see "Spain" below) |
 
 Authorities checked for an eye-line figure and confirmed **not to publish one**:
 UK HMPO, Germany (BMI/Bundesdruckerei), Canada (IRCC), Australia (APO), New
@@ -124,7 +124,7 @@ Published nationally, unchanged in version 2:
 | `jp_passport` | 32–36 mm | MOFA: 34 ± 2 mm crown to chin |
 | `cn_passport`, `cn_visa` | 28–33 mm | Chinese embassy passport/visa photo requirements |
 | `za_passport` | 29–34 mm | DHA photograph specifications |
-| `de_passport`, `de_id`, `fr_passport`, `se_passport`, `es_passport`, `schengen_generic`, `icao_generic`, `mx_passport`, `nz_passport`, `sg_passport`, `ie_passport`, `ae_passport`, `br_passport`, `in_*`, `us_drivers_license` | as bundled | ICAO 70–80% or the national figure already carried from version 1; not re-derived this pass |
+| `de_passport`, `de_id`, `fr_passport`, `se_passport`, `schengen_generic`, `icao_generic`, `mx_passport`, `nz_passport`, `sg_passport`, `ie_passport`, `ae_passport`, `br_passport`, `in_*`, `us_drivers_license` | as bundled | ICAO 70–80% or the national figure already carried from version 1; not re-derived this pass |
 
 **Corrected in version 2**, each against the country's own published template:
 
@@ -133,6 +133,47 @@ Published nationally, unchanged in version 2:
 | `nl_passport` | 32–36 mm | **26–30 mm** | RvIG *Fotomatrix 2020* — 26–30 mm chin to crown for applicants aged 11+. The Netherlands genuinely requires a smaller head than the ICAO generic; 32–36 mm was an assumption, not the Dutch rule. <https://www.rvig.nl/sites/default/files/2023-02/Fotomatrix%202020.pdf> |
 | `ch_passport` | 32–36 mm | **29–34 mm** | fedpol Fotomustertafel — 29–34 mm chin to crown. <https://www.fedpol.admin.ch/dam/de/sd-web/ZA--3ny9zRWt/fotomustertafel.pdf> |
 | `it_passport` | 32–36 mm | **28–32 mm** | Polizia di Stato photo guidance states the face as 70–80% of the photo; on Italy's 40 mm photo that is 28–32 mm. The bundled 32–36 mm was the 45 mm group's figure applied to a 40 mm photo, which is 80–90% — outside every published envelope, and the direct cause of `it_passport` being the one spec whose two bands could not both be satisfied. <https://www.poliziadistato.it/statics/10/fotografia_passaporto_web.pdf> |
+
+**Corrected in version 4 (2026-10-11, app 1.0.3):**
+
+| Spec | Was | Now | Source |
+|---|---|---|---|
+| `es_passport` | 32 mm wide × 26 mm tall; head 18–22 mm; eye line 13–18.2 mm | **26 mm wide × 32 mm tall**; head **22.4–25.6 mm** (ICAO 70–80% of 32 mm); eye line **16–22.4 mm** (ICAO TR Table 9, 50–70% of 32 mm) | See "Spain" below |
+
+### Spain
+
+What the authority actually publishes, read directly on 2026-10-11:
+
+- **DNI** — Real Decreto 255/2025, de 1 de abril, art. 6.2.d) 4.º: *"Una
+  fotografía reciente del rostro de la persona solicitante en color, tamaño 32
+  por 26 milímetros, con fondo uniforme blanco y liso, tomada de frente, con la
+  cabeza totalmente descubierta y sin gafas de cristales oscuros…"*
+  <https://www.boe.es/buscar/act.php?id=BOE-A-2025-6601>
+- **Passport** — Policía Nacional, *Requisitos para la obtención* (citing Real
+  Decreto 896/2003, art. 4): *"Una fotografía reciente en color del rostro del
+  solicitante, tamaño 32 x 26 milímetros, con fondo uniforme blanco y liso,
+  tomada de frente…"*
+  <https://www.dnielectronico.es/PortalDNIe/PRF1_Cons02.action?pag=REF_1084&id_menu=56>
+
+Neither text says which figure is the height. Version 1 read "32 por 26" as
+width-first and shipped a **landscape** 32 × 26 mm photo — the only spec in the
+set wider than it is tall. It is read here as 32 mm tall × 26 mm wide, because:
+
+1. It is a frontal head-and-shoulders portrait under ICAO Doc 9303, and every
+   other document photo in the world that rule governs is portrait or square.
+2. On a 26 mm-tall frame the old 18–22 mm head band was 69–85% of the
+   height — above ICAO's 80% ceiling at the top end. The landscape reading
+   only fit the data by bending it.
+3. Spain's own consular guidance (Consulado General de España en Nador,
+   *Expedición de pasaportes ordinarios*) gives *"tamaño aproximado 32 x 26 mm,
+   aunque la anchura puede llegar a 40 mm"* — width is the figure allowed to
+   grow, which reads naturally only if the base is portrait.
+
+This is a reading of an unoriented figure, not a quotation of one, and is
+labelled as such. Spain publishes no head-height or eye-line figure, so both
+bands follow rule 2 and 3 above (ICAO-derived). `test/photo_spec_test.dart`
+pins the orientation, and also pins that no bundled spec is wider than it is
+tall, so a transposed figure cannot come back silently.
 
 ---
 

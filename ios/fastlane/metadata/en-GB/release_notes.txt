@@ -1,7 +1,7 @@
-First release.
+New app icon.
 
-- 30 document specs across 21 countries, plus ICAO Doc 9303 and Schengen generic fallbacks. Every spec is free.
-- Camera capture with a face guide sized to the document you picked, or import a photo from your library.
-- Automatic crop and scale to the exact dimensions and resolution the spec asks for.
-- An eight-point compliance report with a plain-English reason for every check.
-- Pro unlocks the full-resolution unwatermarked export and the 4x6 inch print sheet, for one payment.
+Spanish passport and DNI photos are now the right shape, 26 mm wide by 32 mm tall. They were coming out landscape.
+
+When a check fails, the report now tells you how to fix it, and re-shoot goes straight back to the camera with your document still selected.
+
+Unlocking Pro now finishes the save you started, without another tap.

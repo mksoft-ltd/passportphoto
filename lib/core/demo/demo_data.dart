@@ -61,6 +61,7 @@ class DemoData {
     final band = '${spec.eyeLineFromBottomMinMm}-'
         '${spec.eyeLineFromBottomMaxMm}mm';
     return ValidationCheck(
+      kind: CheckKind.eyeLine,
       label: 'Eye line within spec',
       passed: ok,
       detail: ok
@@ -80,26 +81,31 @@ class DemoData {
     final actualPct = ((minPct + maxPct) / 2).round();
     return [
       const ValidationCheck(
+        kind: CheckKind.singleFace,
         label: 'Single face detected',
         passed: true,
         detail: 'Exactly one face found in frame.',
       ),
       const ValidationCheck(
+        kind: CheckKind.eyesOpen,
         label: 'Eyes open',
         passed: true,
         detail: 'Both eyes are clearly open.',
       ),
       const ValidationCheck(
+        kind: CheckKind.lookingForward,
         label: 'Looking forward',
         passed: true,
         detail: 'Head is centered and facing the camera.',
       ),
       const ValidationCheck(
+        kind: CheckKind.neutralExpression,
         label: 'Neutral expression',
         passed: true,
         detail: 'Neutral expression, mouth closed.',
       ),
       ValidationCheck(
+        kind: CheckKind.faceSize,
         label: 'Face size within spec',
         passed: true,
         detail: 'Face fills $actualPct% of photo height '
@@ -107,12 +113,14 @@ class DemoData {
       ),
       _eyeLineCheck(spec),
       const ValidationCheck(
+        kind: CheckKind.background,
         label: 'Background',
         passed: true,
         detail: 'Plain, evenly-lit light background. '
             'This document asks for off-white — check the shade matches.',
       ),
       const ValidationCheck(
+        kind: CheckKind.fullyCaptured,
         label: 'Photo fully captured',
         passed: true,
         detail: 'Whole head in frame, and the crop fits within the source.',

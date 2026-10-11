@@ -57,10 +57,11 @@ free tier keeps the full report rather than hiding it behind the paywall.
 - **Automatic crop and scale**: estimates chin-to-crown height, positions the
   eye line where the spec requires, and resamples to exact pixel dimensions
   (mm ÷ 25.4 × dpi).
-- **Seven compliance checks**, each with a pass/fail and a plain-English reason:
-  single face, eyes open, looking forward, face height within the spec's range,
-  eye line within the spec's range, background uniformity, and whether the
-  required crop fitted inside the source photo.
+- **Eight compliance checks**, each with a pass/fail and a plain-English reason:
+  single face, eyes open, looking forward, neutral expression, face height
+  within the spec's range, eye line within the spec's range, background (plain,
+  light, no colour cast), and whether the required crop fitted inside the
+  source photo.
 - **Free on-screen preview**: the finished crop, capped at a 640 px long edge
   and labelled "Preview — Pro exports at full print resolution." Enough to see
   the crop, the framing and the background are right; below both the UK
@@ -74,6 +75,29 @@ free tier keeps the full report rather than hiding it behind the paywall.
 - **Print sheet preview** — free users see the real sheet layout, watermarked,
   before deciding whether to buy.
 - Light and dark theme, following the system setting.
+
+### Added in 1.0.3
+
+- **Spain corrected to 26 mm wide × 32 mm tall** (was bundled landscape,
+  32 × 26). Head and eye-line bands re-derived from ICAO for a 32 mm frame;
+  provenance in `assets/specs/SOURCES.md`. No bundled spec is wider than tall,
+  and a test pins that.
+- **Verdict line** at the top of the report — "All 8 checks passed for …" or
+  "n of 8 checks need attention". It reports checks, never approval.
+- **Failed checks first, each with a "How to fix" hint.** Hints are data on
+  `CheckKind` (`lib/features/processing/processed_photo.dart`), not UI logic.
+- **CTAs by outcome** — see the `/result` screen map entry.
+- **The save resumes after the unlock.** The paywall closes itself with `true`
+  when the entitlement flips while it is open, and the result and print-sheet
+  screens re-run the save the user was making.
+- **Rating prompt** (`lib/core/services/review_prompter.dart`): the OS sheet
+  only, after a successful save of a photo that passed every check, never in
+  the first session, never in a session with a processing error, save failure,
+  purchase error or a paywall closed without buying, never within 10 s of the
+  paywall closing, 120-day cooldown, at most 3 asks ever. Free users qualify on
+  their second distinct session with a passing preview save. No pre-prompt, no
+  incentive, no button that calls it. "Rate the app" on the Pro-active card
+  opens the store listing.
 
 ### Later
 
@@ -98,15 +122,28 @@ free tier keeps the full report rather than hiding it behind the paywall.
 
 /result      Review: cropped preview (640 px cap when locked), spec summary,
              compliance report
-             ├── Pro upsell card (free only) ─────────────────► /pro
-             ├── "Save …photo" ───────────────► gallery write (gated)
+             All checks passed:
+             ├── free: upsell card + "Get the print-ready photo — {store
+             │   price}" ──► /pro ──(unlocked)──► full-res save, no extra tap
+             ├── free: "Save watermarked preview" (text button) ► gallery
+             ├── Pro: "Save full-resolution photo" ► gallery write
              ├── "View 4×6\" print sheet" ────► /sheet
              └── "Re-shoot or pick another" ──► /
+             Any check failed (no upsell):
+             ├── "Fix and re-shoot" ──────────► /capture (replaces /result,
+             │                                   same selected spec)
+             ├── "Save …" preview / full-res ► gallery write (gated)
+             ├── "View 4×6\" print sheet" ────► /sheet
+             └── "Pick another photo" ────────► /
+             Processing error: "Try again" ► /capture, "Pick another photo" ► /
 
 /sheet       Print-sheet preview (watermarked when locked)
              └── "Save print sheet" ──────────► gallery write, or /pro if locked
+                                                 (then saves on unlock)
 
-/pro         Paywall: free-vs-Pro comparison, price from the store, restore
+/pro         Paywall: free-vs-Pro comparison, price from the store, restore.
+             Pops with `true` when the unlock lands while it is open.
+             Already Pro: "Pro is active" card + "Rate the app" (store listing)
 ```
 
 Navigation is GoRouter; `/result` and `/sheet` take the source image path as
@@ -244,7 +281,7 @@ decides whether these answers are still honest.
 One non-consumable in-app purchase, via the native `in_app_purchase` plugin —
 no billing wrapper SDK.
 
-- Product ID: `com.froggyeye.passportphoto.pro`
+- Product ID: `com.froggyeye.passportphoto.pro` on Google Play; `com.froggyeye.passportphoto.pro2` on iOS (the original ID was retired with the deleted App Store Connect record, see PIPELINE.md 7f)
 - Display name: **Passport Photo Studio Pro**
 - Price: £4.99 (Tier equivalent), one-time
 - Type: non-consumable, restorable

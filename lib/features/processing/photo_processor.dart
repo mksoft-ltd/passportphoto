@@ -358,6 +358,7 @@ List<ValidationCheck> _runValidations({
 
   // 1. Single face
   checks.add(ValidationCheck(
+    kind: CheckKind.singleFace,
     label: 'Single face detected',
     passed: extraFaces == 0,
     detail: extraFaces == 0
@@ -370,6 +371,7 @@ List<ValidationCheck> _runValidations({
   final rightP = face.rightEyeOpenProbability;
   final eyesOpen = leftP > 0.6 && rightP > 0.6;
   checks.add(ValidationCheck(
+    kind: CheckKind.eyesOpen,
     label: 'Eyes open',
     passed: eyesOpen,
     detail: eyesOpen
@@ -383,6 +385,7 @@ List<ValidationCheck> _runValidations({
   final pitch = face.pitch;
   final lookingForward = yaw.abs() < 12 && roll.abs() < 8 && pitch.abs() < 12;
   checks.add(ValidationCheck(
+    kind: CheckKind.lookingForward,
     label: 'Looking forward',
     passed: lookingForward,
     detail: lookingForward
@@ -404,6 +407,7 @@ List<ValidationCheck> _runValidations({
   // visible smile, which is what gets photographs refused.
   final smiling = face.smilingProbability > 0.55;
   checks.add(ValidationCheck(
+    kind: CheckKind.neutralExpression,
     label: 'Neutral expression',
     passed: !smiling,
     detail: smiling
@@ -428,6 +432,7 @@ List<ValidationCheck> _runValidations({
   final faceOk = cropResult.faceHeightFraction >= faceFracMin - tolerance &&
       cropResult.faceHeightFraction <= faceFracMax + tolerance;
   checks.add(ValidationCheck(
+    kind: CheckKind.faceSize,
     label: 'Face size within spec',
     passed: faceOk,
     detail: faceOk
@@ -470,6 +475,7 @@ List<ValidationCheck> _runValidations({
         're-shoot.';
   }
   checks.add(ValidationCheck(
+    kind: CheckKind.eyeLine,
     label: 'Eye line within spec',
     passed: eyeOk,
     detail: eyeDetail,
@@ -522,6 +528,7 @@ List<ValidationCheck> _runValidations({
         '($wanted).';
   }
   checks.add(ValidationCheck(
+    kind: CheckKind.background,
     label: 'Background',
     passed: bgOk,
     detail: bgDetail,
@@ -532,6 +539,7 @@ List<ValidationCheck> _runValidations({
   // the second is what causes the first, so they are reported together.
   final headInside = cropResult.headInsideFrame;
   checks.add(ValidationCheck(
+    kind: CheckKind.fullyCaptured,
     label: 'Photo fully captured',
     passed: !cropResult.croppedToBoundary && headInside,
     detail: !headInside

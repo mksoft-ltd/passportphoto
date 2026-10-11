@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
@@ -7,6 +8,7 @@ import 'package:go_router/go_router.dart';
 import '../../app/theme.dart';
 import '../../core/constants/app_info.dart';
 import '../../core/models/photo_spec.dart';
+import '../../core/services/review_prompter.dart';
 import '../../core/utils/external_links.dart';
 import '../export/export_service.dart';
 import '../processing/photo_processor.dart';
@@ -38,7 +40,11 @@ class ResultScreen extends ConsumerWidget {
         ),
         error: (e, _) => _ErrorView(
           message: e is PhotoProcessingFailure ? e.message : e.toString(),
-          onRetake: () => context.go('/'),
+          // The spec lives in `selectedSpecProvider`, so the camera opens
+          // already set up for the same document. Replacing rather than going
+          // keeps Home underneath for the back button.
+          onRetake: () => context.pushReplacement('/capture'),
+          onPickAnother: () => context.go('/'),
         ),
         data: (photo) => _ResultView(photo: photo, sourcePath: sourcePath),
       ),
@@ -91,6 +97,7 @@ class _ResultViewState extends ConsumerState<_ResultView> {
           ],
           const SizedBox(height: 20),
           _ChecklistCard(
+            spec: spec,
             checks: photo.checks,
             passColor: passColor,
             failColor: failColor,
@@ -116,36 +123,10 @@ class _ResultViewState extends ConsumerState<_ResultView> {
           const SizedBox(height: 16),
           _AccessoryRulesCard(spec: spec),
           const SizedBox(height: 24),
-          if (!unlocked) ...[
-            _ProUpsell(onTap: () => context.push('/pro')),
-            const SizedBox(height: 16),
-          ],
-          FilledButton.icon(
-            icon: const Icon(Icons.save_alt_rounded),
-            onPressed: _exporting ? null : _saveSingle,
-            label: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 12),
-              child: Text(unlocked
-                  ? 'Save full-resolution photo'
-                  : 'Save watermarked preview'),
-            ),
-          ),
-          const SizedBox(height: 12),
-          OutlinedButton.icon(
-            icon: const Icon(Icons.grid_view_rounded),
-            onPressed: _exporting
-                ? null
-                : () => context.push('/sheet', extra: widget.sourcePath),
-            label: const Padding(
-              padding: EdgeInsets.symmetric(vertical: 10),
-              child: Text('View 4×6" print sheet'),
-            ),
-          ),
-          const SizedBox(height: 12),
-          TextButton.icon(
-            icon: const Icon(Icons.refresh_rounded),
-            onPressed: _exporting ? null : () => context.go('/'),
-            label: const Text('Re-shoot or pick another photo'),
+          ..._actions(
+            allPassed: photo.allPassed,
+            unlocked: unlocked,
+            price: ref.watch(entitlementProvider.select((s) => s.price)),
           ),
           if (_exporting)
             const Padding(
@@ -157,28 +138,120 @@ class _ResultViewState extends ConsumerState<_ResultView> {
     );
   }
 
-  Future<void> _saveSingle() async {
-    setState(() => _exporting = true);
-    try {
-      final result =
-          await ref.read(exportServiceProvider).savePhoto(widget.photo);
-      if (!mounted) return;
-      if (result.outcome == ExportOutcome.requiresPro) {
-        context.push('/pro');
-        return;
-      }
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(result.message),
-          action: result.outcome == ExportOutcome.savedPreview
-              ? SnackBarAction(
-                  label: 'Unlock Pro',
-                  onPressed: () => context.push('/pro'),
-                )
-              : null,
+  /// The buttons under the report, chosen by how the photo did.
+  ///
+  /// A photo that passed is one worth paying for, so a free user's first
+  /// choice is the print-ready file. A photo that failed is not — selling the
+  /// upgrade under a red report would be selling a file that will be refused —
+  /// so the upsell goes away and the first choice is to fix it. The preview
+  /// save stays available either way.
+  List<Widget> _actions({
+    required bool allPassed,
+    required bool unlocked,
+    required String? price,
+  }) {
+    final busy = _exporting;
+    final sheetButton = OutlinedButton.icon(
+      icon: const Icon(Icons.grid_view_rounded),
+      onPressed:
+          busy ? null : () => context.push('/sheet', extra: widget.sourcePath),
+      label: const Padding(
+        padding: EdgeInsets.symmetric(vertical: 10),
+        child: Text('View 4×6" print sheet'),
+      ),
+    );
+    final saveLabel =
+        unlocked ? 'Save full-resolution photo' : 'Save watermarked preview';
+
+    if (!allPassed) {
+      return [
+        FilledButton.icon(
+          icon: const Icon(Icons.photo_camera_rounded),
+          onPressed: busy ? null : () => context.pushReplacement('/capture'),
+          label: const Padding(
+            padding: EdgeInsets.symmetric(vertical: 12),
+            child: Text('Fix and re-shoot'),
+          ),
         ),
-      );
+        const SizedBox(height: 12),
+        OutlinedButton.icon(
+          icon: const Icon(Icons.save_alt_rounded),
+          onPressed: busy ? null : _saveSingle,
+          label: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 10),
+            child: Text(saveLabel),
+          ),
+        ),
+        const SizedBox(height: 12),
+        sheetButton,
+        const SizedBox(height: 12),
+        TextButton.icon(
+          icon: const Icon(Icons.photo_library_outlined),
+          onPressed: busy ? null : () => context.go('/'),
+          label: const Text('Pick another photo'),
+        ),
+      ];
+    }
+
+    return [
+      if (!unlocked) ...[
+        _ProUpsell(onTap: _unlockThenSave),
+        const SizedBox(height: 16),
+        FilledButton.icon(
+          icon: const Icon(Icons.workspace_premium_rounded),
+          onPressed: busy ? null : _unlockThenSave,
+          label: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 12),
+            // The store's own localised price, or none. Never a figure typed
+            // here: this string ships to every storefront.
+            child: Text(price == null
+                ? 'Get the print-ready photo'
+                : 'Get the print-ready photo — $price'),
+          ),
+        ),
+        const SizedBox(height: 4),
+        TextButton.icon(
+          icon: const Icon(Icons.save_alt_rounded),
+          onPressed: busy ? null : _saveSingle,
+          label: Text(saveLabel),
+        ),
+        const SizedBox(height: 8),
+      ] else ...[
+        FilledButton.icon(
+          icon: const Icon(Icons.save_alt_rounded),
+          onPressed: busy ? null : _saveSingle,
+          label: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 12),
+            child: Text(saveLabel),
+          ),
+        ),
+        const SizedBox(height: 12),
+      ],
+      sheetButton,
+      const SizedBox(height: 12),
+      TextButton.icon(
+        icon: const Icon(Icons.refresh_rounded),
+        onPressed: busy ? null : () => context.go('/'),
+        label: const Text('Re-shoot or pick another photo'),
+      ),
+    ];
+  }
+
+  /// Opens the paywall and, if the user comes back with the unlock, makes the
+  /// save they were reaching for without another tap.
+  Future<void> _unlockThenSave() async {
+    final bought = await context.push<bool>('/pro');
+    if (bought == true && mounted) await _saveSingle();
+  }
+
+  Future<void> _saveSingle() async {
+    final prompter = ref.read(reviewPrompterProvider);
+    setState(() => _exporting = true);
+    ExportResult? result;
+    try {
+      result = await ref.read(exportServiceProvider).savePhoto(widget.photo);
     } catch (e) {
+      prompter.suppressSession();
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Save failed: $e')),
@@ -186,6 +259,34 @@ class _ResultViewState extends ConsumerState<_ResultView> {
       }
     } finally {
       if (mounted) setState(() => _exporting = false);
+    }
+    if (result == null || !mounted) return;
+
+    switch (result.outcome) {
+      case ExportOutcome.requiresPro:
+        await _unlockThenSave();
+      case ExportOutcome.failed:
+        prompter.suppressSession();
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(result.message)),
+        );
+      case ExportOutcome.saved:
+      case ExportOutcome.savedPreview:
+        final preview = result.outcome == ExportOutcome.savedPreview;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(result.message),
+            // Not under a failed report: see [_actions].
+            action: preview && widget.photo.allPassed
+                ? SnackBarAction(label: 'Unlock Pro', onPressed: _unlockThenSave)
+                : null,
+          ),
+        );
+        unawaited(prompter.onSaveSucceeded(
+          fullResolution: !preview,
+          allChecksPassed: widget.photo.allPassed,
+          isMounted: () => mounted,
+        ));
     }
   }
 }
@@ -307,18 +408,40 @@ class _ProUpsell extends StatelessWidget {
 
 class _ChecklistCard extends StatelessWidget {
   const _ChecklistCard({
+    required this.spec,
     required this.checks,
     required this.passColor,
     required this.failColor,
   });
 
+  final PhotoSpec spec;
   final List<ValidationCheck> checks;
   final Color passColor;
   final Color failColor;
 
+  /// One line that says how the photo did. It reports the checks, not the
+  /// outcome of an application: no authority has approved anything here
+  /// (store_assets/BRAND.md, "never imply official status").
+  @visibleForTesting
+  static String verdict(PhotoSpec spec, List<ValidationCheck> checks) {
+    final failed = checks.where((c) => !c.passed).length;
+    if (failed == 0) {
+      return 'All ${checks.length} checks passed for '
+          '${spec.countryName} ${spec.documentType}';
+    }
+    return '$failed of ${checks.length} checks '
+        '${failed == 1 ? 'needs' : 'need'} attention';
+  }
+
   @override
   Widget build(BuildContext context) {
     final passed = checks.where((c) => c.passed).length;
+    // Failures first, so what needs doing is the first thing read. Otherwise
+    // the processor's order, which is stable.
+    final ordered = [
+      ...checks.where((c) => !c.passed),
+      ...checks.where((c) => c.passed),
+    ];
     return Container(
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surfaceContainer,
@@ -332,18 +455,20 @@ class _ChecklistCard extends StatelessWidget {
             children: [
               Expanded(
                 child: Text(
-                  'Compliance checks',
+                  verdict(spec, checks),
                   style: Theme.of(context).textTheme.titleSmall,
                 ),
               ),
+              const SizedBox(width: 8),
               Text('$passed / ${checks.length} passed',
                   style: Theme.of(context).textTheme.bodySmall),
             ],
           ),
           const SizedBox(height: 8),
-          ...checks.map((c) => _CheckRow(
+          ...ordered.map((c) => _CheckRow(
                 label: c.label,
                 detail: c.detail,
+                fixHint: c.passed ? null : c.kind.fixHint,
                 passed: c.passed,
                 passColor: passColor,
                 failColor: failColor,
@@ -358,6 +483,7 @@ class _CheckRow extends StatelessWidget {
   const _CheckRow({
     required this.label,
     required this.detail,
+    required this.fixHint,
     required this.passed,
     required this.passColor,
     required this.failColor,
@@ -365,6 +491,7 @@ class _CheckRow extends StatelessWidget {
 
   final String label;
   final String detail;
+  final String? fixHint;
   final bool passed;
   final Color passColor;
   final Color failColor;
@@ -391,6 +518,15 @@ class _CheckRow extends StatelessWidget {
                   detail,
                   style: Theme.of(context).textTheme.bodySmall,
                 ),
+                if (fixHint != null) ...[
+                  const SizedBox(height: 4),
+                  Text(
+                    'How to fix: $fixHint',
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          fontWeight: FontWeight.w600,
+                        ),
+                  ),
+                ],
               ],
             ),
           ),
@@ -400,11 +536,29 @@ class _CheckRow extends StatelessWidget {
   }
 }
 
-class _ErrorView extends StatelessWidget {
-  const _ErrorView({required this.message, required this.onRetake});
+class _ErrorView extends ConsumerStatefulWidget {
+  const _ErrorView({
+    required this.message,
+    required this.onRetake,
+    required this.onPickAnother,
+  });
 
   final String message;
   final VoidCallback onRetake;
+  final VoidCallback onPickAnother;
+
+  @override
+  ConsumerState<_ErrorView> createState() => _ErrorViewState();
+}
+
+class _ErrorViewState extends ConsumerState<_ErrorView> {
+  @override
+  void initState() {
+    super.initState();
+    // A session in which the app could not do its job is not one to ask for
+    // a rating in.
+    ref.read(reviewPrompterProvider).suppressSession();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -421,15 +575,21 @@ class _ErrorView extends StatelessWidget {
             style: Theme.of(context).textTheme.titleMedium,
           ),
           const SizedBox(height: 8),
-          Text(message, textAlign: TextAlign.center),
+          Text(widget.message, textAlign: TextAlign.center),
           const SizedBox(height: 20),
-          FilledButton(onPressed: onRetake, child: const Text('Try again')),
+          FilledButton(
+            onPressed: widget.onRetake,
+            child: const Text('Try again'),
+          ),
+          TextButton(
+            onPressed: widget.onPickAnother,
+            child: const Text('Pick another photo'),
+          ),
         ],
       ),
     );
   }
 }
-
 
 /// The rules this document sets that the app cannot measure.
 ///

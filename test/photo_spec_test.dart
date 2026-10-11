@@ -58,15 +58,34 @@ void main() {
       expect(usPassport().aspectRatio, closeTo(1.0, 0.001));
     });
 
-    test('is below 1 for the portrait specs and above 1 for landscape', () {
+    test('is below 1 for the portrait specs', () {
       expect(ukPassport().aspectRatio, closeTo(35 / 45, 0.001));
+    });
 
-      // Spain's 32 x 26 mm is the only wider-than-tall spec in the set. The
-      // crop maths multiplies cropHeight by this, so a spec that is wider than
-      // it is tall is worth having in the suite: it is the case where
-      // cropWidth exceeds cropHeight and the horizontal clamp does the work.
+    test('Spain is 26 mm wide by 32 mm tall, not the other way round', () {
+      // Until 1.0.3 this spec was bundled as 32 wide x 26 tall. Spanish law
+      // writes the size as "32 por 26 milímetros" without saying which is the
+      // height, and the data had read it as width-first, so every Spanish
+      // photo came out landscape. See assets/specs/SOURCES.md.
       final es = bundledSpecs().firstWhere((s) => s.id == 'es_passport');
-      expect(es.aspectRatio, greaterThan(1.0));
+      expect(es.widthMm, 26);
+      expect(es.heightMm, 32);
+      expect(es.aspectRatio, closeTo(26 / 32, 0.001));
+      // ICAO's 70-80% head height and 50-70% eye line on a 32 mm photo.
+      expect(es.faceHeightMinMm, closeTo(22.4, 0.001));
+      expect(es.faceHeightMaxMm, closeTo(25.6, 0.001));
+      expect(es.eyeLineFromBottomMinMm, closeTo(16.0, 0.001));
+      expect(es.eyeLineFromBottomMaxMm, closeTo(22.4, 0.001));
+    });
+
+    test('no bundled spec is wider than it is tall', () {
+      // Every document photo in the set is a head-and-shoulders portrait or a
+      // square. A landscape entry is far more likely to be a transposed
+      // "H x W" figure than a real rule — which is exactly how Spain shipped
+      // wrong. Add an exception here only with a source that says so.
+      for (final spec in bundledSpecs()) {
+        expect(spec.widthMm, lessThanOrEqualTo(spec.heightMm), reason: spec.id);
+      }
     });
 
     test('the pixel dimensions keep the millimetre aspect ratio', () {

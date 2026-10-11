@@ -33,6 +33,11 @@ class AppInfo {
 
   static const String proDisplayName = 'Passport Photo Studio Pro';
 
+  /// App Store Connect's Apple ID for the app record created in Oct 2026
+  /// (the earlier record was deleted). Only used to open the listing from
+  /// "Rate the app"; Android finds its listing from the package name.
+  static const String appStoreId = '6821667025';
+
   /// Long edge, in pixels, of the free tier's watermarked preview export.
   /// Big enough to prove the crop is right, too small to print.
   static const int previewLongEdgePx = 600;

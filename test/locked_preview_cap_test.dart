@@ -47,6 +47,7 @@ void main() {
         heightPx: spec.heightPx,
         checks: const [
           ValidationCheck(
+            kind: CheckKind.faceSize,
             label: 'Face size within spec',
             passed: true,
             detail: 'Head is 31.2 mm tall (spec: 29-34 mm).',

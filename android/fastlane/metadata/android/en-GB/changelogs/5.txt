@@ -1,0 +1,7 @@
+New app icon.
+
+Spanish passport and DNI photos are now the right shape, 26 mm wide by 32 mm tall. They were coming out landscape.
+
+When a check fails, the report now tells you how to fix it, and re-shoot goes straight back to the camera with your document still selected.
+
+Unlocking Pro now finishes the save you started, without another tap.

@@ -1,7 +1,7 @@
 name: passport_photo_app
 description: "On-device passport, visa, and ID photo studio for 20+ countries."
 publish_to: 'none'
-version: 1.0.2+4
+version: 1.0.3+5
 
 environment:
   sdk: ^3.11.4
@@ -39,6 +39,10 @@ dependencies:
 
   # Opening the privacy policy from inside the app.
   url_launcher: ^6.3.1
+
+  # The OS rating sheet (SKStoreReviewController / Play In-App Review). Only
+  # ever asked through ReviewPrompter's gate, never from a button.
+  in_app_review: ^2.0.12
 
 dev_dependencies:
   flutter_test:

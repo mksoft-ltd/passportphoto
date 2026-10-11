@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "updated": "2026-08-05",
+  "updated": "2026-10-11",
   "specs": [
     {
       "id": "icao_generic",
@@ -283,16 +283,16 @@
       "countryCode": "ES",
       "countryName": "Spain",
       "documentType": "Passport",
-      "widthMm": 32,
-      "heightMm": 26,
+      "widthMm": 26,
+      "heightMm": 32,
       "dpi": 600,
-      "faceHeightMinMm": 18,
-      "faceHeightMaxMm": 22,
-      "eyeLineFromBottomMinMm": 13.0,
-      "eyeLineFromBottomMaxMm": 18.2,
+      "faceHeightMinMm": 22.4,
+      "faceHeightMaxMm": 25.6,
+      "eyeLineFromBottomMinMm": 16.0,
+      "eyeLineFromBottomMaxMm": 22.4,
       "background": "white",
       "format": "JPEG",
-      "notes": "Spanish passport uses 32x26mm photo. White background.",
+      "notes": "Spanish passport and DNI photo: 26 mm wide by 32 mm tall. Plain white background.",
       "glasses": "unverified",
       "headCovering": "unverified"
     },
@@ -575,5 +575,5 @@
       "headCovering": "unverified"
     }
   ],
-  "dataVersion": 3
+  "dataVersion": 4
 }

@@ -3,8 +3,10 @@ import 'dart:io' show Platform;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../core/constants/app_info.dart';
+import '../../core/services/review_prompter.dart';
 import '../../core/utils/external_links.dart';
 import 'entitlement_controller.dart';
 
@@ -14,20 +16,52 @@ import 'entitlement_controller.dart';
 /// No countdown, no struck-through "was" price, nothing pre-ticked, and every
 /// country and validation check stays free — what Pro buys is the printable
 /// file, not access to the tool.
-class PaywallScreen extends ConsumerWidget {
+class PaywallScreen extends ConsumerStatefulWidget {
   const PaywallScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<PaywallScreen> createState() => _PaywallScreenState();
+}
+
+class _PaywallScreenState extends ConsumerState<PaywallScreen> {
+  /// Read once, because `ref` is not usable in [dispose], which is where the
+  /// prompter needs to hear that the paywall has gone.
+  late final ReviewPrompter _prompter;
+  bool _unlocked = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _prompter = ref.read(reviewPrompterProvider);
+  }
+
+  @override
+  void dispose() {
+    _prompter.notePaywallClosed(unlocked: _unlocked);
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final entitlement = ref.watch(entitlementProvider);
+    _unlocked = entitlement.unlocked;
 
     // A purchase that is declined or abandoned resolves on the store's stream,
     // long after the tap that started it returned, so the message has to reach
     // the user this way rather than as a return value.
     ref.listen(entitlementProvider.select((s) => s.errorMessage), (_, message) {
       if (message == null) return;
+      _prompter.suppressSession();
       _notify(context, message);
       ref.read(entitlementProvider.notifier).acknowledgeError();
+    });
+
+    // The unlock landed while this screen was up — bought or restored. Close
+    // with `true` so the screen that sent the user here can finish the save
+    // they were trying to make, instead of leaving them to find the button
+    // again behind a "Pro is active" card.
+    ref.listen(isProUnlockedProvider, (was, now) {
+      if (was == false && now && context.canPop()) context.pop(true);
     });
 
     return Scaffold(
@@ -45,9 +79,11 @@ class PaywallScreen extends ConsumerWidget {
           children: [
             const _Hero(),
             const SizedBox(height: 24),
-            if (entitlement.unlocked)
-              const _AlreadyUnlocked()
-            else ...[
+            if (entitlement.unlocked) ...[
+              const _AlreadyUnlocked(),
+              const SizedBox(height: 12),
+              const _RateTheApp(),
+            ] else ...[
               const _ComparisonTable(),
               const SizedBox(height: 20),
               const _Reassurance(),
@@ -125,7 +161,7 @@ class _ComparisonTable extends StatelessWidget {
     ('Watermarked preview you can save', false),
     ('Full-resolution photo, no watermark', true),
     ('4×6" print sheet for photo shops', true),
-    ('Saved straight to your gallery', true),
+    ('Unlimited print-ready photos for the whole family', true),
   ];
 
   @override
@@ -325,6 +361,30 @@ class _AlreadyUnlocked extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+}
+
+/// Opens the store listing when the user chooses to. This is the only place
+/// the app links to its own reviews; the OS rating sheet is left to
+/// [ReviewPrompter], and nothing here calls it.
+class _RateTheApp extends ConsumerWidget {
+  const _RateTheApp();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return TextButton.icon(
+      icon: const Icon(Icons.star_outline_rounded),
+      label: const Text('Rate the app'),
+      onPressed: () async {
+        try {
+          await ref.read(reviewClientProvider).openStoreListing();
+        } catch (_) {
+          if (context.mounted) {
+            _notify(context, 'Could not open the store listing.');
+          }
+        }
+      },
     );
   }
 }
