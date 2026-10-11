@@ -1,12 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1152" height="1152" viewBox="0 0 1152 1152">
   <title>Passport Photo Studio Android 12 splash icon</title>
   <defs>
-    <linearGradient id="tick" gradientUnits="userSpaceOnUse"
-      x1="616.0" y1="640.0"
-      x2="920.0" y2="944.0">
-      <stop offset="0" stop-color="#12B06E"/>
-      <stop offset="1" stop-color="#0E9760"/>
-    </linearGradient>
     <linearGradient id="card" gradientUnits="userSpaceOnUse"
       x1="220.0" y1="110.0" x2="780.0" y2="830.0">
       <stop offset="0" stop-color="#FFFFFF"/>
@@ -21,7 +15,7 @@
       <rect x="220.0" y="110.0" width="560.0" height="720.0" rx="28.0"/>
     </clipPath>
   </defs>
-  <g transform="translate(223.45 251.06) scale(0.64217)">
+  <g transform="translate(219.76 241.14) scale(0.71248)">
       <path d="M 290.0 64.0 L 174.0 64.0 L 174.0 180.0" fill="none" stroke="#7FB0FF" stroke-width="26.0" stroke-linecap="round" stroke-linejoin="round"/>
       <path d="M 710.0 64.0 L 826.0 64.0 L 826.0 180.0" fill="none" stroke="#7FB0FF" stroke-width="26.0" stroke-linecap="round" stroke-linejoin="round"/>
       <path d="M 290.0 876.0 L 174.0 876.0 L 174.0 760.0" fill="none" stroke="#7FB0FF" stroke-width="26.0" stroke-linecap="round" stroke-linejoin="round"/>
@@ -35,13 +29,8 @@
                  fill="url(#figure)"/>
         <path d="M 220.0 351.2 L 333.9 351.2
                  M 666.1 351.2 L 780.0 351.2"
-              stroke="#1E5BD8" stroke-opacity="0.55" stroke-width="14"
+              stroke="#1E5BD8" stroke-opacity="0.62" stroke-width="16.0"
               stroke-linecap="round"/>
       </g>
-      <circle cx="768.0" cy="792.0" r="169.0" fill="#0C2350"/>
-      <circle cx="768.0" cy="792.0" r="152.0" fill="url(#tick)"/>
-      <path d="M 706.0 796.0 L 752.0 844.0
-               L 836.0 746.0" fill="none" stroke="#FFFFFF"
-            stroke-width="42" stroke-linecap="round" stroke-linejoin="round"/>
   </g>
 </svg>

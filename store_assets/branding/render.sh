@@ -32,9 +32,15 @@ shot splash_icon_android12.svg splash_icon_android12.png 1152 1152 "$TRANSPARENT
 shot splash_logo.svg           splash_logo.png            768  768 "$TRANSPARENT"
 shot feature_graphic.svg       feature_graphic.png       1024  500 "$TRANSPARENT"
 
-# Small previews for docs and for checking the mark still reads when tiny.
-# Chrome honours an SVG's intrinsic size and crops rather than scales, so the
-# downscales come from the 1024 master via sips.
+# Chrome honours an SVG's intrinsic size and crops rather than scales, so every
+# smaller square comes from the 1024 master via sips.
+
+# Google Play's hi-res store icon: 512 square, 32-bit PNG, no alpha.
+cp icon_master.png play_icon_512.png
+sips -z 512 512 play_icon_512.png >/dev/null
+echo "rendered play_icon_512.png (512x512)"
+
+# Previews for docs, and for checking the mark still reads at launcher size.
 for size in 256 48; do
   cp icon_master.png "icon_preview_${size}.png"
   sips -z "$size" "$size" "icon_preview_${size}.png" >/dev/null

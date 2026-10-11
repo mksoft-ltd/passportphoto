@@ -147,7 +147,7 @@ booth*) and the differentiator (*your photo stays on the phone*).
 
 ### 01 — `01_result` · Review (`/result`)
 
-- **Headline:** Seven checks before you print *(accent: "Seven checks")*
+- **Headline:** Every check before you print *(accent: "Every check")* — count-free since 1.0.2 added an eighth check (Oct 2026); the raw capture still shows the 1.0.0 "7 / 7" report until it is recaptured
 - **Subheadline:** Pass or fail on face size, eye line and background.
 - **State:** UK passport spec, the seeded crop on screen at 35 × 45 mm, the spec
   line reading `827 × 1063 px · 35 × 45 mm · Background: white`, and the

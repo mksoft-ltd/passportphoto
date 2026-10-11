@@ -2,10 +2,14 @@
 """Emit the Passport Photo Studio SVG masters (icon, splash, feature graphic).
 
 The mark is "the spec frame": a document photo card, cropped to the 35x45
-passport ratio, with registration marks at its corners, a head-and-shoulders
-figure sitting on the spec's eye line, and an approval tick. It says
-*measured portrait, approved* without a camera, a booth or a shutter button —
-none of which are what this app actually does.
+passport ratio, with registration marks at its corners and a head-and-shoulders
+figure sitting on the spec's eye line. It says *measured portrait* without a
+camera, a booth or a shutter button — none of which are what this app does.
+
+There is deliberately no tick, badge, rosette, star or seal anywhere in the
+mark. Google Play rejected the 11 Aug 2026 listing under the Metadata policy
+because the previous version's green tick badge read as approval / award
+imagery. Approval-like elements must not come back into any store artwork.
 
 Everything is derived from the constants below, so the mark can be re-tuned
 without hand-editing path data. Run this, then ./render.sh.
@@ -29,8 +33,8 @@ INK_DEEP = "#071634"     # bottom-right of the same gradient
 BLUE = "#1E5BD8"         # Passport Blue - the figure
 BLUE_DEEP = "#154BBE"    # the figure's shoulders, one step down
 SKY = "#7FB0FF"          # registration marks; Passport Blue lifted onto navy
-GREEN = "#12B06E"        # Verify Green - a check that passed
-GREEN_DEEP = "#0E9760"
+GREEN = "#12B06E"        # accent for the feature graphic's claim chip only -
+                         # never as a tick, seal or badge (see module docstring)
 CARD = "#FFFFFF"
 CARD_TINT = "#EDF2FA"    # the card's far corner, so it is paper and not a hole
 TEXT = "#EAF0FA"
@@ -57,22 +61,22 @@ EYE_Y = HEAD_CY - HEAD_RY * 0.16     # where the eye line rule crosses
 SHOULDER_CY = CARD_Y + CARD_H * 1.20
 SHOULDER_RX, SHOULDER_RY = 330.0, 270.0
 
-# The approval tick, overlapping the card's bottom-right corner.
-BADGE_CX, BADGE_CY, BADGE_R = 768.0, 792.0, 152.0
-BADGE_RING = 34.0        # plate-coloured ring, so the badge never merges with
-                         # the card behind it
+# The eye-line rule, drawn across the card and stopping either side of the head.
+EYE_STROKE = 16.0
+EYE_OPACITY = 0.62
+
 
 def hull() -> tuple[float, float, float]:
-    """Span and centre of everything drawn, strokes included."""
-    reg_min_x = CARD_X - REG_OFFSET - REG_STROKE / 2
-    reg_max_x = CARD_X + CARD_W + REG_OFFSET + REG_STROKE / 2
-    reg_min_y = CARD_Y - REG_OFFSET - REG_STROKE / 2
-    reg_max_y = CARD_Y + CARD_H + REG_OFFSET + REG_STROKE / 2
-    badge_edge = BADGE_R + BADGE_RING / 2
-    min_x = min(reg_min_x, BADGE_CX - badge_edge)
-    max_x = max(reg_max_x, BADGE_CX + badge_edge)
-    min_y = min(reg_min_y, BADGE_CY - badge_edge)
-    max_y = max(reg_max_y, BADGE_CY + badge_edge)
+    """Span and centre of everything drawn, strokes included.
+
+    The registration marks are the outermost thing in the mark, so the hull is
+    just their bounding box.
+    """
+    half = REG_STROKE / 2
+    min_x = CARD_X - REG_OFFSET - half
+    max_x = CARD_X + CARD_W + REG_OFFSET + half
+    min_y = CARD_Y - REG_OFFSET - half
+    max_y = CARD_Y + CARD_H + REG_OFFSET + half
     span = max(max_x - min_x, max_y - min_y)
     return span, (min_x + max_x) / 2, (min_y + max_y) / 2
 
@@ -91,9 +95,7 @@ def max_radius() -> float:
         (CARD_X - REG_OFFSET - half, CARD_Y + CARD_H + REG_OFFSET + half),
         (CARD_X + CARD_W + REG_OFFSET + half, CARD_Y + CARD_H + REG_OFFSET + half),
     ]
-    far = max(math.hypot(x - cx, y - cy) for x, y in corners)
-    badge = math.hypot(BADGE_CX - cx, BADGE_CY - cy) + BADGE_R + BADGE_RING / 2
-    return max(far, badge)
+    return max(math.hypot(x - cx, y - cy) for x, y in corners)
 
 
 def coverage_for_round_mask(canvas: int, visible_fraction: float) -> float:
@@ -165,12 +167,6 @@ def mark() -> str:
     gap = 18.0
     eye_left = HEAD_CX - head_half - gap
     eye_right = HEAD_CX + head_half + gap
-    badge = f"""
-      <circle cx="{BADGE_CX}" cy="{BADGE_CY}" r="{BADGE_R + BADGE_RING / 2}" fill="{INK}"/>
-      <circle cx="{BADGE_CX}" cy="{BADGE_CY}" r="{BADGE_R}" fill="url(#tick)"/>
-      <path d="M {BADGE_CX - 62} {BADGE_CY + 4} L {BADGE_CX - 16} {BADGE_CY + 52}
-               L {BADGE_CX + 68} {BADGE_CY - 46}" fill="none" stroke="{CARD}"
-            stroke-width="42" stroke-linecap="round" stroke-linejoin="round"/>"""
     return f"""{registration_marks()}
       <rect x="{CARD_X}" y="{CARD_Y}" width="{CARD_W}" height="{CARD_H}"
             rx="{CARD_R}" fill="url(#card)"/>
@@ -181,18 +177,9 @@ def mark() -> str:
                  fill="url(#figure)"/>
         <path d="M {CARD_X} {EYE_Y} L {eye_left:.1f} {EYE_Y}
                  M {eye_right:.1f} {EYE_Y} L {CARD_X + CARD_W} {EYE_Y}"
-              stroke="{BLUE}" stroke-opacity="0.55" stroke-width="14"
+              stroke="{BLUE}" stroke-opacity="{EYE_OPACITY}" stroke-width="{EYE_STROKE}"
               stroke-linecap="round"/>
-      </g>{badge}"""
-
-
-def tick_gradient() -> str:
-    return f"""    <linearGradient id="tick" gradientUnits="userSpaceOnUse"
-      x1="{BADGE_CX - BADGE_R}" y1="{BADGE_CY - BADGE_R}"
-      x2="{BADGE_CX + BADGE_R}" y2="{BADGE_CY + BADGE_R}">
-      <stop offset="0" stop-color="{GREEN}"/>
-      <stop offset="1" stop-color="{GREEN_DEEP}"/>
-    </linearGradient>"""
+      </g>"""
 
 
 def plate(canvas: int, radius: float | None = None) -> str:
@@ -211,16 +198,20 @@ def plate_gradient(x2: int, y2: int) -> str:
 
 def icon_master(canvas: int = 1024) -> str:
     """Square, opaque, full-bleed. iOS rounds it itself; Android uses it as the
-    legacy launcher icon."""
+    legacy launcher icon and Play as the hi-res store icon.
+
+    0.74 is the largest coverage that keeps the registration-mark elbows inside
+    a full-bleed circular mask (`max_radius()` scales to 487 of the 512 radius),
+    which is what a pre-adaptive-icon launcher can apply to this bitmap.
+    """
     return f"""<svg xmlns="http://www.w3.org/2000/svg" width="{canvas}" height="{canvas}" viewBox="0 0 {canvas} {canvas}">
   <title>Passport Photo Studio app icon</title>
   <defs>
 {plate_gradient(canvas, canvas)}
-{tick_gradient()}
 {mark_defs()}
   </defs>
 {plate(canvas)}
-  <g transform="{mark_transform(canvas, 0.70)}">
+  <g transform="{mark_transform(canvas, 0.74)}">
 {mark()}
   </g>
 </svg>
@@ -232,7 +223,6 @@ def transparent_mark(canvas: int, coverage: float, title: str) -> str:
     return f"""<svg xmlns="http://www.w3.org/2000/svg" width="{canvas}" height="{canvas}" viewBox="0 0 {canvas} {canvas}">
   <title>{title}</title>
   <defs>
-{tick_gradient()}
 {mark_defs()}
   </defs>
   <g transform="{mark_transform(canvas, coverage)}">
@@ -253,11 +243,10 @@ def plated_logo(canvas: int = 768) -> str:
   <title>Passport Photo Studio splash logo</title>
   <defs>
 {plate_gradient(canvas, canvas)}
-{tick_gradient()}
 {mark_defs()}
   </defs>
 {plate(canvas, canvas * 0.224)}
-  <g transform="{mark_transform(canvas, 0.68)}">
+  <g transform="{mark_transform(canvas, 0.74)}">
 {mark()}
   </g>
 </svg>
@@ -271,8 +260,8 @@ def feature_graphic(w: int = 1024, h: int = 500) -> str:
     ~100px on either side.
     """
     span, hx, hy = hull()
-    scale = 322 / span
-    mx, my = 196 - hx * scale, 250 - hy * scale
+    scale = 352 / span
+    mx, my = 200 - hx * scale, 250 - hy * scale
 
     # A faint measuring rule along the bottom, echoing the registration marks.
     ticks = []
@@ -289,7 +278,6 @@ def feature_graphic(w: int = 1024, h: int = 500) -> str:
   <title>Passport Photo Studio - Google Play feature graphic</title>
   <defs>
 {plate_gradient(w, h)}
-{tick_gradient()}
 {mark_defs()}
   </defs>
   <rect width="{w}" height="{h}" fill="url(#plate)"/>
@@ -302,9 +290,9 @@ def feature_graphic(w: int = 1024, h: int = 500) -> str:
     <text x="392" y="248" fill="{TEXT}" font-size="62" font-weight="800" letter-spacing="-1.6">Studio</text>
     <text x="392" y="308" fill="{SKY}" font-size="27" font-weight="600">Print-ready photos for 21 countries.</text>
     <g transform="translate(392 340)">
-      <rect x="0" y="0" rx="21" ry="21" width="412" height="46" fill="{GREEN}" fill-opacity="0.14"
+      <rect x="0" y="0" rx="21" ry="21" width="474" height="46" fill="{GREEN}" fill-opacity="0.14"
             stroke="{GREEN}" stroke-opacity="0.45"/>
-      <text x="22" y="31" fill="{GREEN}" font-size="21" font-weight="700">No ads. Nothing leaves your phone.</text>
+      <text x="22" y="31" fill="{GREEN}" font-size="20" font-weight="700">No ads. Your photo never leaves your phone.</text>
     </g>
   </g>
 </svg>

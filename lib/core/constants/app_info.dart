@@ -11,16 +11,25 @@ class AppInfo {
 
   static const String supportUrl = 'https://froggyeye.com';
   /// Must stay byte-identical to `ios/fastlane/metadata/{en-GB,en-US}/privacy_url.txt`
-  /// and §1 of `android/fastlane/data_safety_answers.md`. Only one of the two
-  /// repository names can be pushed, so a mismatch leaves a live 404 behind the
-  /// paywall's "Privacy policy" button. Pinned by
+  /// and §1 of `android/fastlane/data_safety_answers.md`, or the paywall's
+  /// "Privacy policy" button and the store listings point at different pages.
+  /// Hosted on the publisher's own domain (Froggy Eye Ltd), rendered verbatim
+  /// from `PRIVACY_POLICY.md` in this repo. Pinned by
   /// `test/privacy_url_consistency_test.dart`.
   static const String privacyPolicyUrl =
-      'https://raw.githubusercontent.com/mksoft-ltd/passportphoto/refs/heads/main/PRIVACY_POLICY.md';
+      'https://passportphoto.froggyeye.com/privacy.html';
 
   /// One-time non-consumable unlock. Must match the product created in App
   /// Store Connect and the Play Console.
-  static const String proProductId = 'com.froggyeye.passportphoto.pro';
+  ///
+  /// The stores use different ids. Play keeps the original `.pro`; the App
+  /// Store record was recreated in Oct 2026 and Apple never releases a
+  /// product id once used, even by a deleted app, so iOS sells `.pro2`.
+  static String get proProductId =>
+      defaultTargetPlatform == TargetPlatform.iOS ? iosProProductId : androidProProductId;
+
+  static const String androidProProductId = 'com.froggyeye.passportphoto.pro';
+  static const String iosProProductId = 'com.froggyeye.passportphoto.pro2';
 
   static const String proDisplayName = 'Passport Photo Studio Pro';
 

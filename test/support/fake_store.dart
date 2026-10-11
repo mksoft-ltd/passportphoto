@@ -7,6 +7,7 @@ import 'package:in_app_purchase/in_app_purchase.dart';
 // lockfile as a dependency of `in_app_purchase`, and this file is test-only.
 // ignore: depend_on_referenced_packages
 import 'package:in_app_purchase_platform_interface/in_app_purchase_platform_interface.dart';
+import 'package:passport_photo_app/core/constants/app_info.dart';
 
 /// A store you can script, standing in for `InAppPurchase`.
 ///
@@ -144,7 +145,7 @@ class _FakeProduct implements ProductDetails {
   const _FakeProduct();
 
   @override
-  String get id => 'com.froggyeye.passportphoto.pro';
+  String get id => AppInfo.proProductId;
   @override
   String get title => 'Passport Photo Studio Pro';
   @override

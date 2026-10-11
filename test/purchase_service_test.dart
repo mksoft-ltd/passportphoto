@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
 import 'package:passport_photo_app/core/constants/app_info.dart';
@@ -40,6 +41,12 @@ void main() {
       // A mismatch here is invisible in code review and shows up as a paywall
       // with no price after the app has shipped.
       expect(AppInfo.proProductId, 'com.froggyeye.passportphoto.pro');
+    });
+
+    test('asks the App Store for its own product id on iOS', () {
+      debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
+      addTearDown(() => debugDefaultTargetPlatformOverride = null);
+      expect(AppInfo.proProductId, 'com.froggyeye.passportphoto.pro2');
     });
 
     test('does not query products when the store is unavailable', () async {

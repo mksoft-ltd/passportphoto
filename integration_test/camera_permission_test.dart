@@ -41,7 +41,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 /// ## Running it
 ///
 /// ```
-/// xcrun simctl privacy booted reset camera com.froggyeye.passportphoto
+/// xcrun simctl privacy booted reset camera com.froggyeye.passportphotostudio
 /// flutter test integration_test/camera_permission_test.dart -d <simulator id>
 /// ```
 ///

@@ -133,18 +133,19 @@ background. All three must match or the app flashes on cold start.
 ## The mark
 
 **The spec frame.** A document photo card at the true 35:45 passport ratio,
-with print registration marks at its corners, a head-and-shoulders figure
-positioned on the spec's eye line, and a green approval tick overlapping the
-bottom-right corner. It says *measured portrait, approved* without a camera, a
-booth or a shutter — none of which is what the app does.
+with print registration marks at its corners and a head-and-shoulders figure
+positioned on the spec's eye line. It says *measured portrait* without a
+camera, a booth or a shutter — none of which is what the app does.
 
 - The card is white on Ink Navy; the figure is Passport Blue; the registration
-  marks are Sky; the tick is Verify Green with a navy separating ring.
+  marks are Sky.
 - The eye-line rule runs in from both card edges and **stops at the head**, so
   it reads as a measurement meeting the eyes rather than a line struck through
   a face.
-- The tick is what survives at 48 px, which is why it is large and why it sits
-  outside the card's silhouette rather than inside it.
+- The composition is symmetric: the card fills the frame and the four corner
+  marks sit at the mark's extremes. What survives at 48 px is the white card
+  inside blue brackets — the eye line drops out at that size by design and
+  carries nothing the mark needs.
 
 Geometry lives in `branding/make_branding.py` — edit the constants there, never
 the emitted SVG. Two coverage values are **computed, not chosen**
@@ -152,9 +153,39 @@ the emitted SVG. Two coverage values are **computed, not chosen**
 so a hand-picked size gets them clipped by a round launcher mask or by the
 Android 12 splash circle.
 
-**Do:** keep the tick, keep the corner marks, keep the card white.
+**Do:** keep the corner marks, keep the card white, keep it symmetric.
 **Don't:** add text to the icon, add a flag or crest, tilt it, replace the
-figure with a photograph, or recolour the tick to blue.
+figure with a photograph, or reintroduce a tick, badge, seal, star, rosette,
+laurel or ribbon.
+
+### 2026-08-11 — the approval tick was removed, and may not come back
+
+The mark used to carry a large Verify Green tick in a circular badge over the
+card's bottom-right corner. **Google Play rejected the listing on 11 Aug 2026
+under the Metadata policy**, citing the hi-res store icon (en-GB): a green
+circular tick badge reads as approval / award / endorsement imagery, which the
+policy bars alongside claims about store performance, ranking or awards. The
+feature graphic carried the same badge.
+
+The tick is gone from every store artifact — icon, adaptive foreground, Play
+512, both splash assets, the feature graphic. **No approval-like element may
+return to store art**: no tick, badge, seal, rosette, laurel, ribbon, star
+rating, medal or "verified" chip, in the mark or anywhere else in a store
+asset. This sits alongside the existing "never imply official status" rule
+above; both exist because this app's whole risk surface is looking like it
+certifies something it does not.
+
+The green ticks *inside the app's compliance report* are unaffected. They are
+genuine product functionality reporting a real check result to the person who
+took the photo, not a claim made to a store browser — and they appear in
+screenshots only as captured app UI.
+
+At the same time the feature graphic's claim chip changed from "No ads. Nothing
+leaves your phone." to **"No ads. Your photo never leaves your phone."** The old
+wording overclaimed: the bundled ML Kit SDK reports device ID and diagnostics to
+Google, so "nothing leaves your phone" is false and is on the forbidden list in
+`docs/ASO.md` §9. The photo-specific claim is true, checkable, and is the
+cleared wording.
 
 ---
 
@@ -221,4 +252,9 @@ folder for the commands.
 | Android 12+ splash icon | 1152² transparent on `#0C2350` | `branding/splash_icon_android12.svg` |
 | Splash logo (plated) | 768² transparent | `branding/splash_logo.svg` |
 | Play feature graphic | 1024 × 500 | `branding/feature_graphic.svg` |
+| Play hi-res store icon | 512² opaque, no alpha | `branding/icon_master.svg`, downscaled by `render.sh` |
 | Store screenshots | see `screenshot_specs.md` | `screenshots/` |
+
+`render.sh` writes the Play icon and feature graphic into
+`branding/`; copy both into `android/fastlane/metadata/android/{en-GB,en-US}/images/`
+(as `icon.png` and `featureGraphic.png`) — that is where `supply` reads them.

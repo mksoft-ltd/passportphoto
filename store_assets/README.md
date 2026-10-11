@@ -16,6 +16,7 @@ store_assets/
 │   ├── splash_icon_android12.svg/.png  1152²  Android 12+ splash icon
 │   ├── splash_logo.svg/.png             768²  launch-screen logo (a 4x asset)
 │   ├── feature_graphic.svg/.png    1024×500   Google Play feature graphic
+│   ├── play_icon_512.png                512²  Play hi-res store icon, no alpha
 │   └── icon_preview_256.png / _48.png  previews, incl. a legibility check
 └── screenshots/
     ├── screens.js          the set: slugs, headlines, accents, required states
@@ -32,8 +33,12 @@ store_assets/
 ## 1. Changing the artwork
 
 All the icon geometry is constants at the top of `branding/make_branding.py` —
-the card rectangle, the registration marks, the figure, the tick. Edit those,
-never the emitted SVG (it is overwritten).
+the card rectangle, the registration marks, the figure, the eye line. Edit
+those, never the emitted SVG (it is overwritten).
+
+**Nothing approval-like goes back into this art.** Play rejected the 11 Aug 2026
+listing over the icon's old green tick badge; see `BRAND.md` → *The mark* for
+what that rules out.
 
 ```bash
 python3 store_assets/branding/make_branding.py   # constants → SVG
@@ -47,9 +52,9 @@ honours an SVG's intrinsic size and would crop rather than scale.
 **Two sizes in that script are computed, not chosen.** The adaptive-icon
 foreground and the Android 12 splash icon both get masked to a circle, and this
 mark puts registration marks out at its extremes, so `coverage_for_round_mask()`
-solves for the largest art that survives the mask. If you make the mark wider or
-move the tick, those numbers follow automatically — do not replace them with
-literals.
+solves for the largest art that survives the mask. If you resize the card or
+move the registration marks, those numbers follow automatically — do not
+replace them with literals.
 
 ---
 

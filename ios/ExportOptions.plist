@@ -3,7 +3,7 @@
 <!--
   Manual signing on purpose. `flutter build ipa` with automatic signing dies at
   the export step with "No Accounts / No profiles for
-  'com.froggyeye.passportphoto' were found" unless an Apple ID is signed in to
+  'com.froggyeye.passportphotostudio' were found" unless an Apple ID is signed in to
   Xcode, and xcodebuild's cloud signing (-allowProvisioningUpdates with the ASC
   key) is refused outright: the App Store Connect key's App Manager role cannot
   mint certificates or profiles.
@@ -24,8 +24,8 @@
   <string>Apple Distribution</string>
   <key>provisioningProfiles</key>
   <dict>
-    <key>com.froggyeye.passportphoto</key>
-    <string>Passport Photo Studio App Store</string>
+    <key>com.froggyeye.passportphotostudio</key>
+    <string>Passport Photo Studio iOS App Store</string>
   </dict>
   <key>uploadSymbols</key>
   <true/>

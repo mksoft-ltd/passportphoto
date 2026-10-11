@@ -15,8 +15,8 @@ window.PPS_SCREENS = [
   {
     slug: '01_result',
     screen: 'Review (/result)',
-    headline: 'Seven checks before you print',
-    accent: 'Seven checks',
+    headline: 'Every check before you print',
+    accent: 'Every check',
     sub: 'Pass or fail on face size, eye line and background.',
     state:
       'UK passport spec, the seeded crop on screen at 35×45 mm, and the ' +

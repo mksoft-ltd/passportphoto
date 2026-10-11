@@ -36,7 +36,7 @@ as XML on 2026-08-05: `CAMERA`, `READ_EXTERNAL_STORAGE` (maxSdk 32),
 | Is all of the user data collected by your app encrypted in transit? | **Yes** — ML Kit's telemetry goes to `https://play.googleapis.com/log` over TLS; Play Billing likewise |
 | Do you provide a way for users to request that their data is deleted? | **No** — see the wording below |
 | Does your app comply with the Families policy? | Not applicable — target audience is 18+, not opted into Designed for Families |
-| Privacy policy URL | `https://raw.githubusercontent.com/mksoft-ltd/passportphoto/refs/heads/main/PRIVACY_POLICY.md` |
+| Privacy policy URL | `https://passportphoto.froggyeye.com/privacy.html` |
 
 **Deletion answer, in the free-text box if one is offered:** "The app has no account and
 stores no user record. Nothing collected is linked to an identity, so there is no record

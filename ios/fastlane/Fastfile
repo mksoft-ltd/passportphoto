@@ -1,6 +1,6 @@
 default_platform(:ios)
 
-APP_IDENTIFIER = "com.froggyeye.passportphoto"
+APP_IDENTIFIER = "com.froggyeye.passportphotostudio"
 
 # `flutter build ipa` names the archive after the Xcode product name, not after
 # the pubspec name, so resolve it rather than hard-coding a guess that breaks
@@ -21,7 +21,7 @@ def asc_key
 end
 
 def build_ipa
-  Dir.chdir("../..") { sh("flutter", "build", "ipa", "--release") }
+  Dir.chdir("../..") { sh("flutter", "build", "ipa", "--release", "--export-options-plist=ios/ExportOptions.plist") }
 end
 
 platform :ios do
@@ -40,11 +40,11 @@ platform :ios do
       app_identifier: APP_IDENTIFIER,
       app_name: "Passport Photo Studio",
       language: "English (U.K.)",
-      app_version: "1.0.0",
-      sku: "passportphoto",
+      app_version: "1.0.2",
+      sku: "passportphoto2",
       platforms: ["ios"],
       # The bundle ID is already registered in the Developer Portal
-      # (ASC id FQDJK2W53W); the portal leg of produce needs an Apple ID login
+      # (ASC id SQQ2V5T2N4); the portal leg of produce needs an Apple ID login
       # the API key cannot supply.
       skip_devcenter: true
     )

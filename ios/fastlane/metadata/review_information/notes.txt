@@ -1,35 +1,41 @@
-Passport Photo Studio - notes for App Review
-Froggy Eye Ltd - v1.0.0 - com.froggyeye.passportphoto
+Passport Photo Studio - Froggy Eye Ltd - v1.0.2 - com.froggyeye.passportphotostudio
+
+ABOUT THIS SUBMISSION
+An earlier version (1.0.0) was submitted under a different App Store Connect record, which we removed; this is a fresh record for version 1.0.2. Changes since 1.0.0: a new app icon; the background check now tests colour (plain, light, no colour cast) in the corners outside the head; a new neutral-expression check (eight checks in total); and glasses/head-covering rules quoted from each issuing authority. The app, its code and all artwork are original work by Froggy Eye Ltd; no template or purchased code is used.
 
 WHAT THE APP DOES
-The user picks a country and document type (UK passport, US visa, and so on), takes a photo with the in-app camera or picks one from their library, and the app crops and scales it to that document's published dimensions and resolution. It then runs eight compliance checks and shows a pass or fail with a plain-English reason for each: single face detected, eyes open, looking forward, neutral expression, face size within spec, eye line within spec, background, photo fully captured. Below them it lists the rules the camera cannot judge — glasses and head coverings — quoted from the issuing authority's own guidance, and says plainly when a document's rules have not been confirmed.
+Pick a country and document (UK passport, US visa and so on), take a photo with the in-app camera or pick one from the library, and the app crops and scales it to that document's published size and resolution. It then runs eight checks with a pass/fail and plain-English reason each: single face, eyes open, looking forward, neutral expression, face size, eye line, background, photo fully captured.
 
 NO ACCOUNT IS REQUIRED
-There is no sign-in, registration or backend anywhere in the app, so no demo account is needed. Every feature is reachable from a fresh install.
+No sign-in or backend; every feature is reachable from a fresh install.
 
 HOW TO TEST (about two minutes)
-1. Launch the app. The Home screen shows the currently selected document; tap it to open the picker and choose any of the 30 specs. Nothing in the picker is locked; specs are never gated.
-2. Tap "Take a new photo" and allow camera access, or tap "Pick from gallery" and choose any photo containing a face. On a simulator the gallery route is the quicker one.
-3. The Result screen shows the cropped photo, the spec summary and the eight-check compliance report. A deliberately poor photo (off-centre, busy background, head turned) is the fastest way to see failing checks and their explanations.
-4. Tap "View 4x6 inch print sheet" to see the print layout.
-5. Free saves are watermarked and downscaled. Tapping a Pro-only action opens the paywall.
+1. Home shows the selected document; tap it to choose any of the 30 specs. Nothing in the picker is locked.
+2. Tap "Take a new photo", or "Pick from gallery" (quicker on a simulator) and choose any photo with a face.
+3. The Result screen shows the crop, the spec and the eight-check report.
+4. Tap "View 4x6 inch print sheet".
+5. Free saves are watermarked and downscaled. A Pro-only action opens the paywall.
 
 IN-APP PURCHASE
-One non-consumable product, com.froggyeye.passportphoto.pro ("Passport Photo Studio Pro"). It unlocks the full-resolution unwatermarked export and the 4x6 inch print sheet. The displayed price comes from StoreKit - no price string is hardcoded. "Restore purchase" sits in the Home screen app bar and is reachable on every launch without an account. The free tier is a working product: every country, capture, automatic crop, the complete compliance report, the print-sheet preview, and a watermarked save.
+One non-consumable, com.froggyeye.passportphoto.pro2 ("Passport Photo Studio Pro"): full-resolution unwatermarked export and the 4x6 print sheet. Price comes from StoreKit. "Restore purchase" is in the Home app bar. The free tier is fully usable.
 
-PERMISSIONS AND WHY EACH IS REQUESTED
-- Camera (NSCameraUsageDescription): to take the document photo with the on-screen face guide. Optional - the app offers the gallery import route if camera access is declined.
-- Photo library, read (NSPhotoLibraryUsageDescription): to choose an existing photo to crop.
-- Photo library, add (NSPhotoLibraryAddUsageDescription): to save the finished photo and the print sheet back to the user's own library. This is the only way for the user to get the file to a printer.
-No other permission is requested: no location, contacts, microphone or background use. No ATT prompt is shown and no NSUserTrackingUsageDescription is declared.
+PERMISSIONS
+Camera: to take the photo (optional; gallery import works without it). Photo library read: to pick a photo. Photo library add: to save the result. No other permissions, no ATT prompt.
 
-PRIVACY AND NETWORK USE
-No photograph ever leaves the device. Face detection uses Google ML Kit with the model bundled inside the app binary, and the app's own code contains no API client and no upload path. Two bundled components do use the network: the store's in-app purchase library, and ML Kit, which reports its own diagnostics and a non-advertising device identifier to Google. That is declared in the App Privacy answers - Data Not Linked to You: Device ID, Product Interaction, Performance Data, Other Diagnostic Data, tracking set to No on every row - and in the privacy policy.
+FACE DATA (answers to the Guideline 2.1 questions)
+1. What is collected: nothing. Google ML Kit face detection runs on-device with a bundled model and returns a face bounding box and landmark positions (e.g. eyes) as image coordinates.
+2. Use: only to crop the photo to the chosen specification and to run the on-screen checks. Detection, not recognition: no faceprint, no identification, no comparison between photos.
+3. Sharing/storage: face data never leaves the device, is never written to disk, never included in saved files, and is not shared with us or any third party. ML Kit's diagnostics to Google contain no face data and no image.
+4. Retention: held in memory only while the photo is processed and shown, then discarded.
+5. Privacy policy, "Face data" section, https://passportphoto.froggyeye.com/privacy.html - quote: "No face data is collected, stored, or shared. The detection runs entirely on your device against a model bundled inside the app."
 
-ABOUT THE CLAIMS IN THE LISTING
-Neither the listing nor the app claims that any authority will accept a photo; both state only what was measured against a published specification. Where an authority publishes a figure it is used as published; where none exists it is derived from ICAO Doc 9303 portrait geometry, and the app ships a per-spec source list recording which is which.
+PRIVACY AND NETWORK
+No photo ever leaves the device; the app has no API client or upload path. Two bundled components use the network: StoreKit, and ML Kit diagnostics (declared in App Privacy as Data Not Linked to You: Device ID, Product Interaction, Performance Data, Other Diagnostic Data; no tracking).
+
+CLAIMS
+Neither the listing nor the app claims any authority will accept a photo; only what was measured against a published specification is stated, with a per-spec source list.
 
 CONTENT
-No user-generated content, no sharing, no social or community features, no ads, and no external links other than the privacy policy. The person shown in the App Store screenshots is an illustration drawn by the app itself, not a photograph of a real person.
+No user-generated content, sharing, ads or social features. The face in the screenshots is an illustration drawn by the app, not a real person.
 
-Contact: info@froggyeye.com
+Contact: Kevin Lam, info@froggyeye.com, +447415533188
