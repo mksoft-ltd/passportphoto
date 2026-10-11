@@ -58,12 +58,31 @@ HEAD_RX, HEAD_RY = 150.0, 180.0
 HEAD_CX = CARD_X + CARD_W / 2
 HEAD_CY = CARD_Y + CARD_H * 0.375
 EYE_Y = HEAD_CY - HEAD_RY * 0.16     # where the eye line rule crosses
-SHOULDER_CY = CARD_Y + CARD_H * 1.20
+SHOULDER_CY = CARD_Y + CARD_H * 1.12
 SHOULDER_RX, SHOULDER_RY = 330.0, 270.0
 
+# Hair: a slightly wider cap over the top of the head, cut off above the eye
+# line so the silhouette has a hairline and temples instead of being an egg.
+# (2026-10-11, "Concept 1" of the icon refresh — the plain oval read as generic
+# at launcher size.) Same fill as the head; only the outline changes.
+HAIR_RX, HAIR_RY = 158.0, 110.0
+HAIR_CY = HEAD_CY - 80.0
+HAIR_CUT = EYE_Y                     # the cap is already inside the head here
+
+# Neck: joins the head to the shoulders so there is no white gap between them.
+NECK_HALF_W = 70.0
+NECK_TOP = HEAD_CY + HEAD_RY - 60.0
+NECK_BOTTOM = SHOULDER_CY - SHOULDER_RY + 56.0
+
 # The eye-line rule, drawn across the card and stopping either side of the head.
-EYE_STROKE = 16.0
-EYE_OPACITY = 0.62
+EYE_STROKE = 20.0
+EYE_OPACITY = 0.78
+
+# A soft shadow under the card so it sits on the plate rather than in it.
+# Small enough that it stays inside the registration-mark hull (see hull()).
+SHADOW_DY = 12.0
+SHADOW_BLUR = 16.0
+SHADOW_OPACITY = 0.55
 
 
 def hull() -> tuple[float, float, float]:
@@ -131,7 +150,14 @@ def mark_defs() -> str:
     </linearGradient>
     <clipPath id="cardClip">
       <rect x="{CARD_X}" y="{CARD_Y}" width="{CARD_W}" height="{CARD_H}" rx="{CARD_R}"/>
-    </clipPath>"""
+    </clipPath>
+    <clipPath id="hairClip">
+      <rect x="{CARD_X}" y="{CARD_Y}" width="{CARD_W}" height="{HAIR_CUT - CARD_Y:.1f}"/>
+    </clipPath>
+    <filter id="cardShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="{SHADOW_DY}" stdDeviation="{SHADOW_BLUR}"
+                    flood-color="{INK_DEEP}" flood-opacity="{SHADOW_OPACITY}"/>
+    </filter>"""
 
 
 def registration_marks() -> str:
@@ -169,12 +195,16 @@ def mark() -> str:
     eye_right = HEAD_CX + head_half + gap
     return f"""{registration_marks()}
       <rect x="{CARD_X}" y="{CARD_Y}" width="{CARD_W}" height="{CARD_H}"
-            rx="{CARD_R}" fill="url(#card)"/>
+            rx="{CARD_R}" fill="url(#card)" filter="url(#cardShadow)"/>
       <g clip-path="url(#cardClip)">
         <ellipse cx="{HEAD_CX}" cy="{SHOULDER_CY}" rx="{SHOULDER_RX}" ry="{SHOULDER_RY}"
                  fill="url(#figure)"/>
+        <rect x="{HEAD_CX - NECK_HALF_W}" y="{NECK_TOP}" width="{NECK_HALF_W * 2}"
+              height="{NECK_BOTTOM - NECK_TOP:.1f}" rx="{NECK_HALF_W / 2}" fill="url(#figure)"/>
         <ellipse cx="{HEAD_CX}" cy="{HEAD_CY}" rx="{HEAD_RX}" ry="{HEAD_RY}"
                  fill="url(#figure)"/>
+        <ellipse cx="{HEAD_CX}" cy="{HAIR_CY}" rx="{HAIR_RX}" ry="{HAIR_RY}"
+                 fill="url(#figure)" clip-path="url(#hairClip)"/>
         <path d="M {CARD_X} {EYE_Y} L {eye_left:.1f} {EYE_Y}
                  M {eye_right:.1f} {EYE_Y} L {CARD_X + CARD_W} {EYE_Y}"
               stroke="{BLUE}" stroke-opacity="{EYE_OPACITY}" stroke-width="{EYE_STROKE}"

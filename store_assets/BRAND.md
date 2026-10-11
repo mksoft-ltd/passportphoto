@@ -139,6 +139,11 @@ camera, a booth or a shutter — none of which is what the app does.
 
 - The card is white on Ink Navy; the figure is Passport Blue; the registration
   marks are Sky.
+- The figure is a head with a hairline and temples, a short neck and rounded
+  shoulders — one flat silhouette, no features. (Until 2026-10-11 the head was
+  a plain oval, which read as generic at launcher size; the refresh followed
+  "Concept 1" in `branding/icon_brief.md`.) The card carries a soft shadow so
+  it sits on the plate rather than in it.
 - The eye-line rule runs in from both card edges and **stops at the head**, so
   it reads as a measurement meeting the eyes rather than a line struck through
   a face.
